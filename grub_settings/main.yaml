@@ -1,0 +1,58 @@
+---
+
+- hosts: all
+  become: yes
+  gather_facts: true
+  vars:
+    grub_cfg_filename: "{{ values.grub_cfg_filename | default('99-grub_settings_hoc_module.cfg') }}"
+    grub_update_grub_command: update-grub
+  tasks:
+    - block:
+        - name: Remove /etc/default/grub.d/{{ grub_cfg_filename }}
+          ansible.builtin.file:
+            path: /etc/default/grub.d/{{ grub_cfg_filename }}
+            state: absent
+          when: (values.grub_reset_to_defaults | default(False)) | bool
+          notify:
+            - Update grub
+
+    - block:
+        - name: Create /etc/default/grub.d
+          ansible.builtin.file:
+            path: /etc/default/grub.d
+            state: directory
+
+        - name: Add custom grub settings
+          ansible.builtin.template:
+            src: grub_settings.j2
+            dest: /etc/default/grub.d/{{ grub_cfg_filename }}
+            mode: "0644"
+          notify:
+            - Update grub
+
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+      when: not ((values.grub_reset_to_defaults | default(False)) | bool)
+
+  handlers:
+    - name: Update grub
+      ansible.builtin.command:
+        cmd: "{{ grub_update_grub_command }}"
+      changed_when: true
+      notify:
+        - Create a reboot request
+
+    - block:
+      - name: Create /run/day2
+        ansible.builtin.file:
+          path: /run/day2
+          state: directory
+        listen: Create a reboot request
+
+      - name: Update /run/day2/reboot-required with reboot reason
+        ansible.builtin.lineinfile:
+          path: "/run/day2/reboot-required"
+          line: Reboot is requested due to changes in /etc/default/grub.d/{{ grub_cfg_filename }} config file introduced by grub_settings day2 module
+          create: true
+        listen: Create a reboot request
+      when: not ((values.disable_reboot_request | default(False)) | bool)

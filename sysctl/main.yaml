@@ -1,0 +1,31 @@
+---
+- name: Set sysctl variables
+  hosts: all
+  become: true
+  tasks:
+    - set_fact:
+        sysctl_filename: "/etc/sysctl.d/{{ values.filename }}.conf"
+      when:
+        - values.filename | default ('') != ''
+
+    - set_fact:
+        sysctl_filename: "/etc/sysctl.conf"
+      when:
+        - values.filename | default ('') == ''
+
+    - name: Delete old sysctl file
+      file:
+        state: absent
+        path: "{{ sysctl_filename }}"
+      when:
+        - sysctl_filename != "/etc/sysctl.conf"
+        - values.cleanup_before | default (False)
+
+    - name: Set sysctl value {{ item.key }}
+      sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        state: "{{ values.state | default ('present') }}"
+        reload: yes
+        sysctl_file: "{{ sysctl_filename }}"
+      with_dict: "{{ values.options | default ({}) }}"

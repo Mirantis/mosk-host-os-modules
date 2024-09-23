@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -x
+{% if values.system_cpus is defined %}
+SYSTEM_CPUS={{ values.system_cpus }}
+{% endif %}
+{% if values.system_mem_numas is defined %}
+SYSTEM_MEM_NUMAS={{ values.system_mem_numas }}
+{% endif %}
+
+systemctl set-property --runtime init.scope AllowedCPUs=${SYSTEM_CPUS} AllowedMemoryNodes=${SYSTEM_MEM_NUMAS}

@@ -1,0 +1,7 @@
+[{{ unitType }}]
+{% if values.system_cpus is defined %}
+AllowedCPUs={{ values.system_cpus }}
+{% endif %}
+{% if values.system_mem_numas is defined %}
+AllowedMemoryNodes={{ values.system_mem_numas }}
+{% endif %}

@@ -1,0 +1,102 @@
+---
+
+- hosts: all
+  become: yes
+  gather_facts: true
+  vars:
+    shield_service_name_v1: "{{ values.old_shield_service_name | default('shield-cpus.service') }}"
+  tasks:
+    # For Ubuntu 22.04 with cgroup v2 under systemd management
+    - block:
+      # Check if shielding service from older Ubuntu version is present
+      # and disable it (in case of Ubuntu distro upgrade)
+      - name: Populate service facts
+        ansible.builtin.service_facts:
+        when:
+          - (values.disable_old_shield_service | default(False)) | bool
+
+      - name: Disable {{ shield_service_name_v1 }}
+        systemd:
+          name: "{{ shield_service_name_v1 }}"
+          enabled: False
+        notify:
+          - Create a reboot request
+        when:
+          - (values.disable_old_shield_service | default(False)) | bool
+          - shield_service_name_v1 in ansible_facts.services
+          - ansible_facts.services[shield_service_name_v1]['status'] == 'enabled'
+
+      - name: Define shield service and script names
+        ansible.builtin.set_fact:
+          shield_service_name: shield-cpu-numa-systemd-init-scope.service
+          shield_script_name: shield-cpu-numa-systemd-init-scope.sh
+
+      - name: Create unit file drop-in directory
+        ansible.builtin.file:
+          path: /etc/systemd/system/{{ item }}.d
+          state: directory
+        loop: "{{ values.systemd_units_to_pin | default([]) }}"
+
+      - name: Create drop-in config file with CPU/NUMA pinning
+        ansible.builtin.template:
+          src: "99-shielding.conf.j2"
+          dest: "/etc/systemd/system/{{ item }}.d/99-shielding.conf"
+          mode: "0644"
+        vars:
+          unitList: "{{ item | split('.') }}"
+          unitType: "{{ unitList | last | capitalize }}"
+        notify:
+          - Manage service
+        loop: "{{ values.systemd_units_to_pin | default([]) }}"
+
+      - name: Create shield script
+        ansible.builtin.template:
+          src: "{{ shield_script_name }}.j2"
+          dest: "/usr/bin/{{ shield_script_name }}"
+          mode: "0755"
+        notify:
+          - Manage service
+
+      - name: Create systemd service
+        ansible.builtin.template:
+          src: "{{ shield_service_name }}.j2"
+          dest: "/etc/systemd/system/{{ shield_service_name }}"
+          mode: "0644"
+        notify:
+          - Manage service
+
+      - name: Flush handlers
+        ansible.builtin.meta: flush_handlers
+
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version is version_compare('22.04', '>=')
+
+    - name: Fail if distro is not Ubuntu 22.04 or newer
+      ansible.builtin.fail:
+        msg: "Module supports Ubuntu 22.04 or higher. Your distro is not allowed"
+      when: (ansible_distribution != 'Ubuntu' or ansible_distribution_version is version_compare('22.04', '<'))
+
+  handlers:
+    - name: Manage service
+      systemd:
+        name: "{{ shield_service_name }}"
+        enabled: true
+      changed_when: true
+      notify:
+        - Create a reboot request
+
+    - block:
+      - name: Create /run/day2
+        ansible.builtin.file:
+          path: /run/day2
+          state: directory
+        listen: Create a reboot request
+
+      - name: Update /run/day2/reboot-required with reboot reason
+        ansible.builtin.lineinfile:
+          path: "/run/day2/reboot-required"
+          line: Reboot is requested due to (re)configuring CPU/NUMA shielding using cpushield day2 module
+          create: true
+        listen: Create a reboot request
+      when: not ((values.disable_reboot_request | default(False)) | bool)

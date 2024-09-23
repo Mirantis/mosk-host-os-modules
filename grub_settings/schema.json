@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "grub_cfg_filename": {
+      "type": "string",
+      "description": "Grub config filename in /etc/default/grub.d. 99-grub_settings_hoc_module.cfg by default"
+    },
+    "grub_reset_to_defaults": {
+      "type": "boolean",
+      "const": true,
+      "description": "If true, /etc/default/grub.d config file with custom settings will be removed"
+    },
+    "disable_reboot_request": {
+      "type": "boolean",
+      "description": "If true, LCM reboot request file creation will be skipped."
+    },
+    "options": {
+      "type": "object",
+      "description": "Grub options to be configured on host",
+      "properties": {
+        "grub_timeout": {
+          "type": "integer",
+          "description": "GRUB_TIMEOUT value"
+        },
+        "grub_timeout_style": {
+          "type": "string",
+          "pattern": "^(menu|countdown|hidden)$",
+          "description": "GRUB_TIMEOUT_STYLE value"
+        },
+        "grub_hidden_timeout": {
+          "type": "integer",
+          "description": "GRUB_HIDDEN_TIMEOUT value"
+        },
+        "grub_hidden_timeout_quiet": {
+          "type": "boolean",
+          "pattern": "^[0-9]*$",
+          "description": "GRUB_HIDDEN_TIMEOUT value"
+        },
+        "grub_recordfail_timeout": {
+          "type": "integer",
+          "description": "GRUB_RECORDFAIL_TIMEOUT value"
+        },
+        "grub_default": {
+          "type": "string",
+          "description": "GRUB_DEFAULT value"
+        },
+        "grub_savedefault": {
+          "type": "boolean",
+          "description": "GRUB_SAVEDEFAULT value"
+        },
+        "grub_cmdline_linux": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "GRUB_CMDLINE_LINUX value in form of options list"
+        },
+        "grub_cmdline_linux_default": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "GRUB_CMDLINE_LINUX_DEFAULT value in form of options list"
+        },
+        "grub_disable_os_prober": {
+          "type": "boolean",
+          "description": "GRUB_DISABLE_OS_PROBER value"
+        },
+        "grub_disable_linux_recovery": {
+          "type": "boolean",
+          "description": "GRUB_DISABLE_LINUX_RECOVERY value"
+        },
+        "grub_gfxmode": {
+          "type": "string",
+          "pattern": "^[0-9x,]+$",
+          "description": "GRUB_GFXMODE value"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "allOf": [
+        {"required": ["options"]},
+        {"not": {"required": ["grub_reset_to_defaults"]}}
+      ]
+    },
+    {
+      "allOf": [
+        {"not": {"required": ["options"]}},
+        {"required": ["grub_reset_to_defaults"]}
+      ]
+    }
+  ]
+}

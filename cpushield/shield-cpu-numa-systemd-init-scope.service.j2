@@ -1,0 +1,14 @@
+[Unit]
+Description=Shield CPUs and NUMA
+DefaultDependencies=no
+Before=systemd-update-utmp.service
+
+[Service]
+ExecStart=/usr/bin/{{ shield_script_name }}
+RemainAfterExit=true
+Type=oneshot
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=sysinit.target

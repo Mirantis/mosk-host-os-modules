@@ -1,0 +1,6 @@
+name: grub_settings
+description: 'Module for grub configuration'
+version: 1.0.0
+valuesJsonSchema: schema.json
+docURL: https://docs.mirantis.com/container-cloud/latest/operations-guide/operate-managed/operate-managed-bm/day2/mcc-modules/grub_settings-module.html
+playbook: main.yaml

@@ -1,0 +1,36 @@
+{% if values.options.grub_timeout is defined %}
+GRUB_TIMEOUT={{ values.options.grub_timeout }}
+{% endif %}
+{% if values.options.grub_timeout_style is defined %}
+GRUB_TIMEOUT_STYLE='{{ values.options.grub_timeout_style }}'
+{% endif %}
+{% if values.options.grub_hidden_timeout is defined %}
+GRUB_HIDDEN_TIMEOUT={{ values.options.grub_hidden_timeout }}
+{% endif %}
+{% if values.options.grub_hidden_timeout_quiet is defined %}
+GRUB_HIDDEN_TIMEOUT_QUIET={{ values.options.grub_hidden_timeout_quiet | to_json }}
+{% endif %}
+{% if values.options.grub_recordfail_timeout is defined %}
+GRUB_RECORDFAIL_TIMEOUT={{ values.options.grub_recordfail_timeout }}
+{% endif %}
+{% if values.options.grub_default is defined %}
+GRUB_DEFAULT='{{ values.options.grub_default }}'
+{% endif %}
+{% if values.options.grub_savedefault is defined %}
+GRUB_SAVEDEFAULT={{ values.options.grub_savedefault | to_json }}
+{% endif %}
+{% if values.options.grub_cmdline_linux is defined %}
+GRUB_CMDLINE_LINUX='{{ values.options.grub_cmdline_linux | join(' ') }}'
+{% endif %}
+{% if values.options.grub_cmdline_linux_default is defined %}
+GRUB_CMDLINE_LINUX_DEFAULT='{{ values.options.grub_cmdline_linux_default | join(' ') }}'
+{% endif %}
+{% if values.options.grub_disable_os_prober is defined %}
+GRUB_DISABLE_OS_PROBER={{ values.options.grub_disable_os_prober | to_json }}
+{% endif %}
+{% if values.options.grub_disable_linux_recovery is defined %}
+GRUB_DISABLE_LINUX_RECOVERY={{ values.options.grub_disable_linux_recovery | to_json }}
+{% endif %}
+{% if values.options.grub_gfxmode is defined %}
+GRUB_GFXMODE='{{ values.options.grub_gfxmode }}'
+{% endif %}

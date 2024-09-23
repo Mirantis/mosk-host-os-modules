@@ -1,0 +1,103 @@
+---
+
+- hosts: all
+  become: yes
+  gather_facts: true
+  tasks:
+    - block:
+        - name: Install irqbalance
+          apt:
+            name: irqbalance
+            state: "latest"
+            update_cache: "{{ values.update_apt_cache | default('true') }}"
+          retries: 3
+          delay: 10
+          register: apt_result
+          until: apt_result is succeeded
+
+        - name: Update IRQBALANCE_BANNED_CPULIST value, remove IRQBALANCE_BANNED_CPUS
+          lineinfile:
+            path: /etc/default/irqbalance
+            regexp: "{{ item.regexp }}"
+            line: "{{ item.line }}"
+          with_items:
+            - { regexp: "^IRQBALANCE_BANNED_CPULIST=|^#IRQBALANCE_BANNED_CPULIST=", line: "IRQBALANCE_BANNED_CPULIST={{ values.banned_cpulist }}" }
+            - { regexp: "^IRQBALANCE_BANNED_CPUS=", line: "#IRQBALANCE_BANNED_CPUS=" }
+          when:
+            - values.banned_cpulist is defined and values.banned_cpulist != ""
+            - values.banned_cpus is not defined or values.banned_cpus == ""
+
+        - name: Update IRQBALANCE_BANNED_CPUS value, remove IRQBALANCE_BANNED_CPULIST
+          lineinfile:
+            path: /etc/default/irqbalance
+            regexp: "{{ item.regexp }}"
+            line: "{{ item.line }}"
+          with_items:
+            - { regexp: "^IRQBALANCE_BANNED_CPUS=|^#IRQBALANCE_BANNED_CPUS=", line: "IRQBALANCE_BANNED_CPUS={{ values.banned_cpus }}" }
+            - { regexp: "^IRQBALANCE_BANNED_CPULIST=", line: "#IRQBALANCE_BANNED_CPULIST=" }
+          when:
+            - values.banned_cpus is defined and values.banned_cpus != ""
+            - values.banned_cpulist is not defined or values.banned_cpulist == ""
+
+        - name: Remove IRQBALANCE_BANNED_CPUS and IRQBALANCE_BANNED_CPULIST
+          lineinfile:
+            path: /etc/default/irqbalance
+            regexp: "{{ item.regexp }}"
+            line: "{{ item.line }}"
+          with_items:
+            - { regexp: "^IRQBALANCE_BANNED_CPUS=", line: "#IRQBALANCE_BANNED_CPUS=" }
+            - { regexp: "^IRQBALANCE_BANNED_CPULIST=", line: "#IRQBALANCE_BANNED_CPULIST=" }
+          when:
+            - values.banned_cpus is defined or values.banned_cpulist is defined
+            - values.banned_cpus | default("") == ""
+            - values.banned_cpulist | default("") == ""
+
+        - name: Update IRQBALANCE_ARGS value
+          lineinfile:
+            path: /etc/default/irqbalance
+            regexp: "^IRQBALANCE_ARGS=|^#IRQBALANCE_ARGS="
+            line: "IRQBALANCE_ARGS={{ values.args }}"
+          when: values.args is defined and values.args != ""
+
+        - name: Remove IRQBALANCE_ARGS value
+          lineinfile:
+            path: /etc/default/irqbalance
+            regexp: "^IRQBALANCE_ARGS=|^#IRQBALANCE_ARGS="
+            line: "#IRQBALANCE_ARGS="
+          when: values.args is defined and values.args == ""
+
+        - name: Enable IRQBALANCE_ONESHOT
+          lineinfile:
+            path: /etc/default/irqbalance
+            regexp: "^IRQBALANCE_ONESHOT=|^#IRQBALANCE_ONESHOT="
+            line: "IRQBALANCE_ONESHOT=True" # value can be anything
+          when: values.oneshot is defined and values.oneshot
+
+        - name: Disable IRQBALANCE_ONESHOT
+          lineinfile:
+            path: /etc/default/irqbalance
+            regexp: "^IRQBALANCE_ONESHOT=|^#IRQBALANCE_ONESHOT="
+            line: "#IRQBALANCE_ONESHOT="
+          when: values.oneshot is defined and (not values.oneshot)
+
+        - name: Create policy script file
+          copy:
+            content: "{{ values.policy_script }}"
+            dest: "{{ values.policy_script_filepath }}"
+            owner: root
+            group: root
+            mode: 0755
+          when:
+            - values.policy_script_filepath | default("") != ""
+            - values.policy_script | default("") != ""
+
+        - name: Enable/disable irqbalance service
+          service:
+            name: irqbalance
+            enabled: "{{ values.enabled | default(true) }}"
+            # restart service if it's enabled to apply configuration changes
+            state: "{{ 'restarted' if values.enabled | default(true) else 'stopped' }}"
+
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - values.os_version | default ('') in ['', ansible_distribution_version]

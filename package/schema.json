@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "definitions": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "properties": {
+    "os_version": {
+      "type": "string",
+      "pattern": "2[02]\\.04"
+    },
+    "dpkg_options": {
+      "type": "string",
+      "pattern": "[-a-zA-Z0-9_.]+(,[-a-zA-Z0-9_.]+)*"
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "$ref": "#/definitions/nonEmptyString"
+          },
+          "state": {
+            "type": "string",
+            "pattern": "present|absent|build-dep|latest|fixed"
+          },
+          "allow_unauthenticated": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "yes|no"
+              },
+              { "type": "boolean"}
+            ]
+          },
+          "autoremove": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "yes|no"
+              },
+              { "type": "boolean"}
+            ]
+          },
+          "purge": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "yes|no"
+              },
+              { "type": "boolean"}
+            ]
+          },
+          "update_cache": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "yes|no"
+              },
+              { "type": "boolean"}
+            ]
+          }
+        },
+        "required": ["name"]
+      },
+      "additionalProperties": false
+    },
+    "repositories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "repo": {
+            "type": "string",
+            "$ref": "#/definitions/nonEmptyString"
+          },
+          "key": {"type": "string"},
+          "codename": {"type": "string"},
+          "filename": {
+            "type": "string",
+            "pattern": "^[-a-zA-Z0-9_.]+$"
+          },
+          "state": {
+            "type": "string",
+            "pattern": "present|absent"
+          },
+          "validate_certs": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "yes|no"
+              },
+              { "type": "boolean"}
+            ]
+          },
+          "additionalProperties": false
+        },
+        "required": [ "repo", "filename" ]
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "irqbalance configuration",
+  "description": "Please refer to readme.md",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "description": "Enable irqbalance service. 'true' by default."
+    },
+    "banned_cpulist": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*|((0|[1-9][0-9]*)-[1-9][0-9]*))(,(0|[1-9][0-9]*|((0|[1-9][0-9]*)-[1-9][0-9]*)))*$",
+      "description": "IRQBALANCE_BANNED_CPULIST value. Don't define it to not update current IRQBALANCE_BANNED_CPULIST in the irqbalance config file. Mutually exclusive with 'banned_cpus'."
+    },
+    "banned_cpus": {
+      "type": "string",
+      "pattern": "^[0-9a-f]+(,[0-9a-f]+)*$",
+      "description": "IRQBALANCE_BANNED_CPUS value. Don't define it to not update current IRQBALANCE_BANNED_CPUS in the irqbalance config file. IRQBALANCE_BANNED_CPUS is deprecated in irqbalance v1.8.0. Mutually exclusive with 'banned_cpulist'."
+    },
+    "args": {
+      "type": "string",
+      "description": "IRQBALANCE_ARGS value. Don't define it to not update current IRQBALANCE_ARGS in the irqbalance config file."
+    },
+    "oneshot": {
+      "type": "boolean",
+      "description": "IRQBALANCE_ONESHOT value. Don't define it to not update current IRQBALANCE_ONESHOT in the irqbalance config file."
+    },
+    "policy_script": {
+      "type": "string",
+      "description": "irqbalance policy script (bash compatible script)."
+    },
+    "policy_script_filepath": {
+      "type": "string",
+      "description": "Full file path name to store irqbalance policy script that can be used with '--policyscript=<filepath>' argument. Leave empty to not write policy script."
+    },
+    "update_apt_cache": {
+      "type": "boolean",
+      "description": "Update apt cache before installing irqbalance. 'true' by default."
+    }
+  },
+  "dependencies": {
+    "banned_cpulist": {
+      "not": {
+        "required": ["banned_cpus"]
+      }
+    },
+    "banned_cpus": {
+      "not": {
+        "required": ["banned_cpulist"]
+      }
+    },
+    "policy_script": ["policy_script_filepath", "args"],
+    "policy_script_filepath": ["policy_script", "args"]
+  },
+  "additionalProperties": false
+}

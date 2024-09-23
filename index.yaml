@@ -1,0 +1,36 @@
+apiVersion: kaas.mirantis.com/v1alpha1
+kind: HostOSConfigurationModules
+metadata:
+  name: mcc-modules
+spec:
+  modules:
+    - name: cpushield
+      version: 1.0.0
+      sha256sum: 169596f79b811a43b842cf4895c4d920ec97b46b8a9c2837690e564d34ba04d4
+    - name: grub_settings
+      version: 1.0.0
+      sha256sum: fad1fbe7822076e45345df684fb7c9f3298e7749c43f3da5f874a043728d8fe4
+    - name: irqbalance
+      version: 1.0.0
+      sha256sum: 29318f71475e6a5fddbaa7b9a9bc2ab77b245cd6cef4f5f12b0a1d9a8f16b99d
+    - name: irqbalance
+      version: 1.1.0
+      sha256sum: 04d753100b0a27f72816faaec0b68f9b3f87ccef4da4a32d8ae33c73f17c1db7
+    - name: package
+      version: 1.0.0
+      sha256sum: 2c7c91206ce7a81a90e0068cd4ce7ca05eab36c4da1893555824b5ab82c7cc0e
+    - name: package
+      version: 1.1.0
+      sha256sum: 53ec71760dd6c00c6ca668f961b94d4c162eef520a1f6cb7346a3289ac5d24cd
+    - name: package
+      version: 1.2.0
+      sha256sum: 17834eb0bc273714389e8eb8df55bd4130e030c2526ca7dc3178dee6842cbf3e
+    - name: sysctl
+      version: 1.0.0
+      sha256sum: d78352e51792bbe64e573b841d12f54af089923c73bc185bac2dc5d0e6be84cd
+    - name: sysctl
+      version: 1.1.0
+      sha256sum: bc5fafd15666cb73379d2e63571a0de96fff96ac28e5bce603498cc1f34de299
+    - name: sysctl
+      version: 1.2.0
+      sha256sum: affc4301c188e73337931c9ce3fd68be4f76d5b2f6a29733728b34f177e1b60e

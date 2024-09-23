@@ -1,0 +1,42 @@
+---
+
+- hosts: all
+  become: yes
+  gather_facts: true
+  tasks:
+    - block:
+        - name: Add apt keys
+          shell: "curl -fsSL {{ item.key }} | apt-key add -qq - "
+          with_items: "{{ values.repositories | default ([]) }}"
+          when:
+            - item.key | default ('') != ''
+            - item.state | default ('present') == 'present'
+          retries: 5
+          delay: 10
+
+        - name: Install repositories
+          apt_repository:
+            repo: "{{ item.repo }}"
+            codename: "{{ item.codename | default ('') }}"
+            filename: "{{ item.filename }}"
+            update_cache: yes
+            state: "{{ item.state | default ('present') }}"
+            validate_certs: "{{ item.validate_certs | default (True) }}"
+          with_items: "{{ values.repositories | default ([]) }}"
+          when:
+            - values.repositories is defined
+
+        - name: Install a list of packages
+          apt:
+            name: "{{ item.name }}"
+            state: "{{ item.state | default ('present') }}"
+            dpkg_options: "{{ values.dpkg_options | default ('force-confold,force-confdef') }}"
+            allow_unauthenticated: "{{ item.allow_unauthenticated | default ('no') }}"
+            autoremove: "{{ item.autoremove | default ('no') }}"
+            purge: "{{ item.purge | default ('no') }}"
+            update_cache: "{{ item.update_cache | default ('no') }}"
+          with_items: "{{ values.packages | default ([]) }}"
+
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - values.os_version | default ('') in ['', ansible_distribution_version]
