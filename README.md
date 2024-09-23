@@ -60,8 +60,7 @@ Check a full list of [day2 modules implemented by Container Cloud](https://docs.
 
 ## Release process
 
-All modules and `index.yaml` are built [per-commit by Jenkins](https://ci.mcp.mirantis.net/job/kaas-bm-kaas-bm-host-os-modules-build/) using [`make-artifact.groovy`](https://gerrit.mcp.mirantis.com/plugins/gitiles/mcp/mcp-pipelines/+/refs/heads/master/make-artifact.groovy) pipeline, that runs the `Makefile` in a container.
- Merged modules are then avaiable on [`binary-dev-kaas-local` internal artifactory](https://artifactory.mcp.mirantis.net/ui/native/binary-dev-kaas-local/bm/bin/host-os-modules/) and in `master` branch of `artifact-metadata`.
+All modules and `index.yaml` are built per-commit by Jenkins using pipeline, that runs the `Makefile` in a container. Merged modules are then avaiable on internal artifactory and in `master` branch of `artifact-metadata`.
 
 Use `make promote` to promote latest modules version in the repository, so new non-development versions are set for every module and all dev versions are removed from `index.yaml`.
 
