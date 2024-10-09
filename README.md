@@ -4,6 +4,16 @@ This repository contains Ansible modules for Mirantis Container Cloud that are r
 
 Modules manage various system configurations through Ansible playbooks, adhering to specific schemas and metadata requirements.
 
+## TLDR
+
+1. Make changes to a module or introduce a new one
+1. **Do not change `version` field of the `metadata.yaml` files manually**
+1. `make`
+1. `git add -A && git commit`
+1. `git push -u origin HEAD:refs/for/master`
+1. Test the new CR
+1. `make promote && git push -u origin HEAD:refs/for/master`
+
 ## Module structure
 
 Each module directory contains specific files crucial for the operation of the OS Modules.
@@ -21,6 +31,8 @@ The common structure within each module is as follows:
 Modules are indexed in `index.yaml` file that is stored in this repo. Before committing to gerrit, please run `make` to ensure fresh build and correct sha256 sums for module artifacts.
 
 The directory `.githooks` contains Git hooks that can be used to enforce building modules and `index.yaml`.
+
+**Do not change** `metadata.yaml`'s `version` field manually, it will be changed automatically after running the `make` before committing.
 
 ### Installing the Hooks
 
