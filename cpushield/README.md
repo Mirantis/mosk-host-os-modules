@@ -47,3 +47,13 @@ values:
   - user.slice
   - kubepods.slice
 ```
+
+## Known issues
+
+The cpushield module version 1.0.0 causes new CPU shielding settings to be applied
+immediately using the implicit systemd daemon-reload call by the built-in Ansible module.
+As a result, all new processes are spawned on the specified CPU range without node reboot.
+Some containers may be restarted as a side effect of this behaviour.
+
+The issue is resolved in the cpushield module version 1.1.0 and newer, where shielding changes
+are applied only after node reboot.

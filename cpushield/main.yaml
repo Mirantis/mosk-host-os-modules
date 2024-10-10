@@ -19,6 +19,11 @@
         systemd:
           name: "{{ shield_service_name_v1 }}"
           enabled: False
+          daemon-reexec: no
+          daemon-reload: no
+          daemon_reexec: no
+          daemon_reload: no
+          state: stopped
         notify:
           - Create a reboot request
         when:
@@ -81,7 +86,12 @@
     - name: Manage service
       systemd:
         name: "{{ shield_service_name }}"
+        daemon-reexec: no
+        daemon-reload: no
+        daemon_reexec: no
+        daemon_reload: no
         enabled: true
+        state: stopped
       changed_when: true
       notify:
         - Create a reboot request
