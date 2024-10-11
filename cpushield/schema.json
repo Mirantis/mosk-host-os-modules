@@ -10,6 +10,10 @@
       "type": "boolean",
       "description": "If true, module disables systemd service that provided CPU shielding in older Ubuntu versions. Service name may be specified in old_shield_service_name parameter. If not - shield-cpus.service is used by default"
     },
+    "apply_settings_immediately": {
+      "type": "boolean",
+      "description": "If true, systemctl daemon-reload command applies CPU/NUMA pinning settings for specified slices immediately. Only processes/threads spawned after will be placed on specified cores. Does not affect already running processes"
+    },
     "old_shield_service_name": {
       "type": "string",
       "description": "name of systemd service that implements CPU shielding in older Ubuntu releases"

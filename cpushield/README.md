@@ -1,30 +1,72 @@
-# cpushield day2 module
+# cpushield module
 
-**_NOTE:_** Only Ubuntu 22.04 and newer is supported with cgroup v2 only and systemd (e.g. in Unified Control Group hierarchy mode, without cgroup v1)
+!!! warning
 
-This module allows to configure cpu and NUMA node shielding. The module points systemd itself (PID 1 under init.scope), system.slice, user.slice and other unit files to use cores/NUMA nodes specified in parameters. Thus, other cores may be used exclusively, f.e., for pinning virtual machines vCPUs there (Nova vcpu_pin_set setting).
+    Only Ubuntu 22.04 or newer is supported with cgroup v2 and systemd, for example, in the
+    Unified Control Group hierarchy mode, where cgroup v1 is unsupported.
 
-[AllowedCPUs](https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html#AllowedCPUs=) and [AllowedMemoryNodes](https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html#AllowedMemoryNodes=) Systemd unit file options are used for this purpose.
+The cpushield day-2 module allows configuring CPU and NUMA node shielding.
+The module points `systemd` itself (PID 1 under `init.scope`), `system.slice`, `user.slice`,
+and other unit files to use cores/NUMA nodes specified in parameters. Thus, you can use
+other cores exclusively, for example, for pinning vCPUs of virtual machines (using the Nova
+`vcpu_pin_set` parameter). For this purpose, use the
+[AllowedCPUs](https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html#AllowedCPUs=) and [AllowedMemoryNodes](https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html#AllowedMemoryNodes=) systemd unit file options.
 
-Reboot is required to properly move all system tasks to specified cores.
+!!! note
+
+    Assigning all system tasks to the specified cores requires a reboot.
+
+!!! tip
+
+    Mirantis does not recommend creating more than one `HostOSConfiguration` (HOC) object
+    per machine with the cpushield module, because the systemd drop-in configuration file name
+    is hardcoded to `99-shielding.conf`. CPU cores/NUMA nodes of a newer HOC object will completely
+    regenerate this configuration file.
+
+    To change cpushield settings, for example, to use other cores for system processes,
+    either edit an existing HOC object, or remove the old one and create a new one from scratch
+    to avoid confusion by multiple cpushield-containing objects.
+
+!!! note
+
+    The cpushield module creates a special file for LCM agent to request a subsequent reboot.
+    This file has the text format and contains a line with the reboot reason. LCM agent reports
+    to LCM controller that reboot is required for the corresponding LCM machine. You can disable
+    creation of reboot request by setting `disable_reboot_request` to `true`.
+
+    To perform the reboot, create a
+    [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html)
+    object with a specific machine name.
 
 ## Supported cpushield parameters
 
-- `system_cpus` - list of CPU cores that will be used for system processes, required;
-- `system_mem_numas` - list of NUMA nodes that will be used for system processes, optional;
-- `disable_reboot_request` - boolean, `true` or `false`. If `true`, module will NOT create a special file for LCM agent for requesting a subsequent reboot (e.g. reboot will not occur).
-- `enable` - enable or disable shielding systemd service (boolean). Default: `true`;
-- `systemd_units_to_pin` - list of systemd units for which *AllowedCPUs* option will be set. See recommended value in an example below;
-- `disable_old_shield_service` - boolean, `true` or `false`. If `true`, module will disable `old_shield_service_name` systemd service. Default: `false`;
-- `old_shield_service_name` - name of systemd service that implements CPU shielding in older Ubuntu releases < 22.04. Default: `shield-cpus.service`.
+- `system_cpus` (required) - list of CPU cores to use for system processes.
+- `system_mem_numas` (optional) - list of NUMA nodes to use for system processes.
+- `disable_reboot_request` (optional, bool) - creation of a special file for LCM agent to request
+  a subsequent reboot for the machine. If `true`, module does not create such a file.
+  Default: `false`.
+- `systemd_units_to_pin` (optional) - list of systemd units for which the `AllowedCPUs` option
+  will be set. For the recommended value, see the example below.
+- `disable_old_shield_service` (optional, bool) - disablement of the `old_shield_service_name`
+  systemd service. Default: `false`.
+- `apply_settings_immediately` (optional, boolean) - enables `systemctl daemon-reload` to immediately
+  apply CPU/NUMA pinning settings for units from `systemd_units_to_pin`. Only processes and threads
+  spawned after setting this option to `true` will adhere to new pinning. A system reboot is required
+  to pin all existing system processes to the specified cores. Otherwise, the option does not apply to
+  currently running processes. Enablement of this option may cause side effects such as container restarts
+  or re-creations. Default: `false`.
+- `old_shield_service_name` (optional, string) - name of the systemd service that implements
+  CPU shielding in old Ubuntu releases < 22.04. Default: `shield-cpus.service`.
 
-Useful links:
-1. [Manual configuration for older Ubuntu versions - cgroup v1](https://docs.mirantis.com/mosk/latest/deploy/deploy-openstack/advanced-config/advanced-compute/configure-cpu-isolation.html?highlight=cpu%20isolation)
-2. [Shielding Linux Resources Book](https://documentation.suse.com/sle-rt/15-SP5/pdf/book-shielding_en.pdf)
+!!! note "See also"
+
+    * [Manual configuration for older Ubuntu versions - cgroup v1](https://docs.mirantis.com/mosk/latest/deploy/deploy-openstack/advanced-config/advanced-compute/configure-cpu-isolation.html?highlight=cpu%20isolation)
+    * [Shielding Linux Resources Book](https://documentation.suse.com/sle-rt/15-SP5/pdf/book-shielding_en.pdf)
 
 ## Examples
 
-To pin system processes onto CPU cores 0, 1, 2 and 5 for Ubuntu 22.04 (cgroup v2 case) use:
+To pin system processes onto CPU cores 0, 1, 2, and 5 for Ubuntu 22.04 in the cgroup v2 use case:
+
 ```
 ---
 values:
@@ -35,7 +77,9 @@ values:
   - kubepods.slice
 ```
 
-To pin system processes onto CPU cores 10, 11 and disable old shielding service after Ubuntu 20.04 -> 22.04 upgrade:
+To pin system processes onto CPU cores 10 and 11 as well as disable the old shielding service
+after the Ubuntu 20.04 -> 22.04 upgrade:
+
 ```
 ---
 values:

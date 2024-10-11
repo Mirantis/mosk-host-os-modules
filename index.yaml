@@ -7,6 +7,9 @@ spec:
     - name: cpushield
       version: 1.0.0
       sha256sum: 169596f79b811a43b842cf4895c4d920ec97b46b8a9c2837690e564d34ba04d4
+    - name: cpushield
+      version: 1.1.0
+      sha256sum: 38ccb1c74ccbe4f47dc3dbfbf620a40902620a53c9792a8c7d1742844f311708
     - name: grub_settings
       version: 1.0.0
       sha256sum: fad1fbe7822076e45345df684fb7c9f3298e7749c43f3da5f874a043728d8fe4

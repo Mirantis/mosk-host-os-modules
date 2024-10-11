@@ -16,9 +16,8 @@
           - (values.disable_old_shield_service | default(False)) | bool
 
       - name: Disable {{ shield_service_name_v1 }}
-        systemd:
-          name: "{{ shield_service_name_v1 }}"
-          enabled: False
+        ansible.builtin.command:
+          cmd: "systemctl disable --no-reload {{ shield_service_name_v1 }}"
         notify:
           - Create a reboot request
         when:
@@ -65,6 +64,11 @@
         notify:
           - Manage service
 
+      - name: Apply CPU/NUMA pinning settings immediately
+        ansible.builtin.command:
+          cmd: "systemctl daemon-reload"
+        when: (values.apply_settings_immediately | default(False)) | bool
+
       - name: Flush handlers
         ansible.builtin.meta: flush_handlers
 
@@ -79,9 +83,8 @@
 
   handlers:
     - name: Manage service
-      systemd:
-        name: "{{ shield_service_name }}"
-        enabled: true
+      ansible.builtin.command:
+        cmd: "systemctl enable --no-reload {{ shield_service_name }}"
       changed_when: true
       notify:
         - Create a reboot request
