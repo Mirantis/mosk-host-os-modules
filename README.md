@@ -1,6 +1,6 @@
 # Host OS configuration ansible modules for MCC
 
-This repository contains Ansible modules for Mirantis Container Cloud that are released to customers.
+This repository contains Ansible modules for Mirantis Container Cloud (MCC) that are released to customers.
 
 Modules manage various system configurations through Ansible playbooks, adhering to specific schemas and metadata requirements.
 
@@ -64,11 +64,17 @@ Modules are installed and controlled through two CRs in the management cluster:
 - [HostOSConfiguration](https://docs.mirantis.com/container-cloud/latest/api/bm/host-os-configuration.html)
 - [HostOSConfigurationModule](https://docs.mirantis.com/container-cloud/latest/api/bm/host-os-configuration-modules.html)
 
-Ansible module execution is implemented via existing LCM mechanism, by creating an additional `StateItem` for mapped `LCMMachines` in MCC Management Cluster.
+Ansible module execution is implemented using the existing LCM mechanism, by creating an additional `StateItem` for mapped `LCMMachines`
+in MCC management cluster. For more implementation details, see (MOSK documentation)[https://docs.mirantis.com/mosk/latest/ops/bm-operations/host-os-conf/day2-intro.html].
 
-## Modules provided by Container Cloud
+## Modules provided by MCC
 
-Check a full list of [day2 modules implemented by Container Cloud](https://docs.mirantis.com/container-cloud/latest/operations-guide/operate-managed/operate-managed-bm/day2/mcc-day2-modules.html) on Mirantis documentation portal.
+Modules provided by MCC use the designated `HostOSConfigurationModule` object named `mcc-modules`.
+All other `HostOSConfigurationModule` objects contain custom modules.
+
+> Warning:: Do not modify the `mcc-modules` object, any changes will be overwritten with data from an external source.
+
+Modules provided by MCC are described in this repository in their respective folders.
 
 ## Release process
 
