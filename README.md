@@ -9,10 +9,10 @@ Modules manage various system configurations through Ansible playbooks, adhering
 1. Make changes to a module or introduce a new one
 1. **Do not change `version` field of the `metadata.yaml` files manually**
 1. `make`
-1. `git add -A && git commit`
-1. `git push -u origin HEAD:refs/for/master`
+1. Commit changes
 1. Test the new CR
-1. `make promote && git push -u origin HEAD:refs/for/master`
+1. `make promote`
+1. Commit changes
 
 ## Module structure
 
