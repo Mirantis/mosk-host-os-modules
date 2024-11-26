@@ -1,9 +1,7 @@
 # cpushield module
 
-!!! warning
-
-    Only Ubuntu 22.04 or newer is supported with cgroup v2 and systemd, for example, in the
-    Unified Control Group hierarchy mode, where cgroup v1 is unsupported.
+> Warning: Only Ubuntu 22.04 is supported with cgroup v2 and systemd. For example, this
+> configuration supports Unified Control Group hierarchy mode, which is not supported by cgroup v1.
 
 The cpushield day-2 module allows configuring CPU and NUMA node shielding.
 The module points `systemd` itself (PID 1 under `init.scope`), `system.slice`, `user.slice`,
@@ -12,33 +10,26 @@ other cores exclusively, for example, for pinning vCPUs of virtual machines (usi
 `vcpu_pin_set` parameter). For this purpose, use the
 [AllowedCPUs](https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html#AllowedCPUs=) and [AllowedMemoryNodes](https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html#AllowedMemoryNodes=) systemd unit file options.
 
-!!! note
+> Note: Assigning all system tasks to the specified cores requires a reboot.
 
-    Assigning all system tasks to the specified cores requires a reboot.
-
-!!! tip
-
-    Mirantis does not recommend creating more than one `HostOSConfiguration` (HOC) object
-    per machine with the cpushield module, because the systemd drop-in configuration file name
-    is hardcoded to `99-shielding.conf`. CPU cores/NUMA nodes of a newer HOC object will completely
-    regenerate this configuration file.
-
-    To change cpushield settings, for example, to use other cores for system processes,
-    either edit an existing HOC object, or remove the old one and create a new one from scratch
-    to avoid confusion by multiple cpushield-containing objects.
-
-!!! note
-
-    The cpushield module creates a special file for LCM agent to request a subsequent reboot.
-    This file has the text format and contains a line with the reboot reason. LCM agent reports
-    to LCM controller that reboot is required for the corresponding LCM machine. You can disable
-    creation of reboot request by setting `disable_reboot_request` to `true`.
-
-    To perform the reboot, create a
-    [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html)
-    object with a specific machine name.
+> Tip: Mirantis does not recommend creating more than one `HostOSConfiguration` (HOC) object per machine
+> with the cpushield module, because the systemd drop-in configuration file name is hardcoded to
+> `99-shielding.conf`. CPU cores/NUMA nodes of a newer HOC object will completely regenerate this
+> configuration file.
+>
+> To change cpushield settings, for example, to use other cores for system processes,
+> either edit an existing HOC object, or remove the old one and create a new one from scratch
+> to avoid confusion by multiple cpushield-containing objects.
 
 ## Supported cpushield parameters
+
+> Note: The cpushield module creates a special file for LCM agent to request a subsequent reboot.
+> This file has the text format and contains a line with the reboot reason. LCM agent reports
+> to LCM controller that reboot is required for the corresponding LCM machine. You can disable
+> creation of reboot request by setting `disable_reboot_request` to `true`.
+>
+> To perform the reboot, create a [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html)
+> object with a specific machine name.
 
 - `system_cpus` (required) - list of CPU cores to use for system processes.
 - `system_mem_numas` (optional) - list of NUMA nodes to use for system processes.
@@ -58,10 +49,9 @@ other cores exclusively, for example, for pinning vCPUs of virtual machines (usi
 - `old_shield_service_name` (optional, string) - name of the systemd service that implements
   CPU shielding in old Ubuntu releases < 22.04. Default: `shield-cpus.service`.
 
-!!! note "See also"
-
-    * [Manual configuration for older Ubuntu versions - cgroup v1](https://docs.mirantis.com/mosk/latest/deploy/deploy-openstack/advanced-config/advanced-compute/configure-cpu-isolation.html?highlight=cpu%20isolation)
-    * [Shielding Linux Resources Book](https://documentation.suse.com/sle-rt/15-SP5/pdf/book-shielding_en.pdf)
+> See also:
+> - [Manual configuration for older Ubuntu versions - cgroup v1](https://docs.mirantis.com/mosk/latest/deploy/deploy-openstack/advanced-config/advanced-compute/configure-cpu-isolation.html?highlight=cpu%20isolation)
+> - [Shielding Linux Resources Book](https://documentation.suse.com/sle-rt/15-SP5/pdf/book-shielding_en.pdf)
 
 ## Examples
 
