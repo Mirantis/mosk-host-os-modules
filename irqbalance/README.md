@@ -95,7 +95,7 @@ Using the module, you can provide the following parameters, all of them are opti
         ...
         - description: Example irqbalance configuration
           module: irqbalance
-          moduleVersion: 1.0.1
+          moduleVersion: 1.1.0
           order: 1
           phase: "reconfigure"
           values: {}
@@ -112,7 +112,7 @@ In result, no parameters will be set/overridden in the irqbalance configuration 
         ...
         - description: Example irqbalance configuration
           module: irqbalance
-          moduleVersion: 1.0.1
+          moduleVersion: 1.1.0
           order: 1
           phase: "reconfigure"
           values:
@@ -134,7 +134,7 @@ IRQBALANCE_ONESHOT will be set to `True`.
         ...
         - description: Example irqbalance configuration
           module: irqbalance
-          moduleVersion: 1.0.1
+          moduleVersion: 1.1.0
           order: 1
           phase: "reconfigure"
           values:

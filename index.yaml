@@ -25,6 +25,9 @@ spec:
     - name: irqbalance
       version: 1.1.0
       sha256sum: 04d753100b0a27f72816faaec0b68f9b3f87ccef4da4a32d8ae33c73f17c1db7
+    - name: irqbalance
+      version: 1.1.1-dev
+      sha256sum: 22369d22d0e273182be720ca972d716990cb887d4a017f8116165985240129bf
     - name: package
       version: 1.0.0
       sha256sum: 2c7c91206ce7a81a90e0068cd4ce7ca05eab36c4da1893555824b5ab82c7cc0e
