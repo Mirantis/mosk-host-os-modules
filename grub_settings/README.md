@@ -1,38 +1,68 @@
-# grub_settings day2 module
+# grub_settings module
 
-This module allows to configure most of Grub2 variables which are normally specified inside `/etc/default/grub` configuration file.
+The grub_settings module allows configuring most of GRUB2 variables, which are specified
+in the `/etc/default/grub` configuration file by default.
 
-Module uses drop-in file `/etc/default/grub.d/99-grub_settings_hoc_module.cfg` by default to save a user-defined configuration. Drop-in config files take a precedence over `/etc/default/grub`. User can override drop-in filename via `grub_cfg_filename` parameter (see below). Note, that lexicographical order is used, e.g. file `100-myconf.cfg` will be processed **BEFORE** `90-foobar.conf`.
+By default, the module uses the drop-in `/etc/default/grub.d/99-grub_settings_hoc_module.cfg`
+file to save the user-defined configuration. Drop-in configuration files take precedence
+over `/etc/default/grub`. The user can override the drop-in file name using the `grub_cfg_filename`
+parameter. The lexicographical order is used for file processing. For example, `100-myconf.cfg` is
+processed before `90-foobar.conf`.
 
-It allows to override any Grub2 option. F.e., if `/etc/default/grub` contains `GRUB_CMD_LINE="loglevel=4 iommu=off"`, but `/etc/default/grub.d/99-grub_settings_hoc_module.cfg` has `GRUB_CMD_LINE="iommu=on debug"`, only the latter value will be added to kernel parameters (e.g. no values joining for a variable used).
+The module allows overriding any GRUB2 option. For example, if `/etc/default/grub` contains
+`GRUB_CMD_LINE="loglevel=4 iommu=off"` but `/etc/default/grub.d/99-grub_settings_hoc_module.cfg` has
+`GRUB_CMD_LINE="iommu=on debug"`, only the latter value is added to kernel parameters.
 
-## Supported Grub2 parameters (under options key):
-- `grub_timeout` - GRUB_TIMEOUT parameter, in seconds (integer);
-- `grub_timeout_style` - GRUB_TIMEOUT_STYLE parameter. Allowed values: `menu`, `countdown`, `hidden`;
-- `grub_hidden_timeout` - GRUB_HIDDEN_TIMEOUT parameter, in seconds (integer);
-- `grub_hidden_timeout_quiet` - GRUB_HIDDEN_TIMEOUT_QUIET parameter, boolean, `true` or `false`;
-- `grub_recordfail_timeout` - GRUB_RECORDFAIL_TIMEOUT parameter, in seconds (integer);
-- `grub_default` - GRUB_DEFAULT parameter (default kernel to boot, string);
-- `grub_savedefault` - GRUB_SAVEDEFAULT parameter, boolean, `true` or `false`;
-- `grub_cmdline_linux` - a list of options to form GRUB_CMDLINE_LINUX parameter value. All of them are joined into a string. Empty list is allowed to override GRUB_CMDLINE_LINUX with empty value;
-- `grub_cmdline_linux_default` - a list of options to form GRUB_CMDLINE_LINUX_DEFAULT parameter value. All of them are joined into a string. Empty list is allowed to override GRUB_CMDLINE_LINUX with empty value;
-- `grub_disable_os_prober` - GRUB_DISABLE_OS_PROBER parameter, boolean, `true` or `false`;
-- `grub_disable_linux_recovery` - GRUB_DISABLE_LINUX_RECOVERY parameter, boolean, `true` or `false`;
-- `grub_gfxmode` - GRUB_GFXMODE parameter, string, only values in format `1280x1024x16,800x600x24,640x480` are allowed (e.g. screen resolutions divided by `,`).
+> Note: The grub_settings module creates a special file for LCM agent to request a subsequent reboot.
+> This file has the text format and contains a line with the reboot reason. LCM agent reports
+> to LCM controller that reboot is required for the corresponding LCM machine. You can disable
+> creation of a reboot request by setting `disable_reboot_request` to `true`.
+>
+> To perform a reboot, create a
+> [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html)
+> object with a specific machine name.
 
-Detailed information:
-1. [Ubuntu Grub2 Settings](https://help.ubuntu.com/community/Grub2/Setup)
-2. [Official Grub2 docs](https://www.gnu.org/software/grub/manual/grub/html_node/Simple-configuration.html)
+## Supported GRUB2 parameters (under the `options` key)
+
+- `grub_timeout` (integer) - defines `GRUB_TIMEOUT` in seconds.
+- `grub_timeout_style` (string) - defines `GRUB_TIMEOUT_STYLE`. Allowed values: `menu`,
+`countdown`, and `hidden`.
+- `grub_hidden_timeout` (integer) - defines `GRUB_HIDDEN_TIMEOUT` in seconds.
+- `grub_hidden_timeout_quiet` (boolean) - defines `GRUB_HIDDEN_TIMEOUT_QUIET`.
+- `grub_recordfail_timeout` (integer) - defines `GRUB_RECORDFAIL_TIMEOUT` in seconds.
+- `grub_default` (string) - defines `GRUB_DEFAULT` for the default kernel to boot.
+- `grub_savedefault` (boolean) - defines `GRUB_SAVEDEFAULT`.
+- `grub_cmdline_linux` (array of strings) - contains the list of options form the `GRUB_CMDLINE_LINUX`
+parameter value. All of them are joined into a string. An empty list is allowed to override `GRUB_CMDLINE_LINUX`
+with an empty value.
+- `grub_cmdline_linux_default` (array of strings) - contains the list of options form the
+`GRUB_CMDLINE_LINUX_DEFAULT` parameter value. All of them are joined into a string. An empty list
+is allowed to override `GRUB_CMDLINE_LINUX` with an empty value.
+- `grub_disable_os_prober` (boolean) - defines `GRUB_DISABLE_OS_PROBER`.
+- `grub_disable_linux_recovery` (boolean) - defines `GRUB_DISABLE_LINUX_RECOVERY`.
+- `grub_gfxmode` (string) - defines `GRUB_GFXMODE`. Only values in the
+`1280x1024x16,800x600x24,640x480` format are allowed. For example, a screen resolution must be
+divided by `,`.
+
+> Learn more:
+>
+> - [Ubuntu GRUB2 Settings](https://help.ubuntu.com/community/Grub2/Setup)
+> - [Official GRUB2 docs](https://www.gnu.org/software/grub/manual/grub/html_node/Simple-configuration.html)
 
 
 ## Special module parameters
-- `grub_cfg_filename` - a name of custom file under `/etc/default/grub.d`, optional
-- `grub_reset_to_defaults` - boolean, only `true` value is allowed. Mutually exclusive with all Grub2 settings parameters, specified above. Removes drop-in config file with settings added by module and regenerates `grub.cfg`;
-- `disable_reboot_request` - boolean, `true` or `false`. If `true`, module will NOT create a special file for LCM agent for requesting a subsequent reboot.
+
+- `grub_cfg_filename` (string, optional) - name of a custom file under `/etc/default/grub.d`.
+- `grub_reset_to_defaults` (boolean) - removes the drop-in configuration file with settings added
+by the module and regenerates `grub.cfg`. Only the `true` value is allowed. Mutually exclusive with
+all GRUB2 parameters specified above.
+- `disable_reboot_request` (boolean) - creation of a special file for LCM agent to request
+a subsequent reboot. If `true`, module does not create such a file and reboot does not occur. Default: `false`.
 
 ## Examples
 
-Change some Grub2 options without reboot:
+Change some GRUB2 options without reboot:
+
 ```
 ---
 values:
@@ -55,7 +85,8 @@ values:
     grub_timeout_style: menu
 ```
 
-Use a custom grub config filename:
+Use a custom grub configuration file name:
+
 ```
 ---
 values:
@@ -65,7 +96,8 @@ values:
     grub_default: '3'
 ```
 
-Change some Grub2 options without reboot request:
+Change some GRUB2 options without a reboot request:
+
 ```
 ---
 values:
@@ -75,7 +107,8 @@ values:
     grub_hidden_timeout_quiet: true
 ```
 
-Reset to default Grub2 configuration without reboot request:
+Reset the GRUB2 configuration to default without a reboot request:
+
 ```
 ---
 values:
@@ -83,22 +116,27 @@ values:
   disable_reboot_request: true
 ```
 
-Reset to default Grub2 configuration with reboot request:
+Reset the GRUB2 configuration to default with a reboot request:
+
 ```
 ---
 values:
   grub_reset_to_defaults: true
 ```
 
-**WRONG configuration** You cannot use `grub_reset_to_defaults` along with any Grub2 configuration option as it makes no sense and restricted by module's schema.json:
-```
----
-values:
-  grub_reset_to_defaults: true
-  options:
-    grub_cmdline_linux:
-      - 'cgroup_enable=memory'
-      - 'debug'
-      - 'intel_iommu=off'
-```
-This will result in failure of module's JSON schema validation in HostOSConfiguration resource.
+> Warning: You cannot use `grub_reset_to_defaults` with any GRUB2 configuration option,
+> it is restricted by `schema.json` of the module. For example, the following incorrect
+> configuration results in the `schema.json` validation failure in the `HostOSConfiguration`
+> resource:
+>
+>```
+>---
+>values:
+>  grub_reset_to_defaults: true
+>  options:
+>    grub_cmdline_linux:
+>      - 'cgroup_enable=memory'
+>      - 'debug'
+>      - 'intel_iommu=off'
+>```
+
