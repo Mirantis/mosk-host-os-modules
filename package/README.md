@@ -2,8 +2,8 @@
 
 The package module allows the operator to configure additional Ubuntu mirrors and install required packages from these mirrors
 on cluster machines using the mechanism implemented in the day-2 operations API. Under the hood, this module is based on
-(apt)[https://docs.ansible.com/ansible/2.9/modules/apt_module.html] and
-(apt_repository)[https://docs.ansible.com/ansible/2.9/modules/apt_repository_module.html] Ansible modules.
+[apt](https://docs.ansible.com/ansible/2.9/modules/apt_module.html) and
+[apt_repository](https://docs.ansible.com/ansible/2.9/modules/apt_repository_module.html) Ansible modules.
 
 > Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 20.04 and 22.04
 > in the Cluster releases 16.3.0 and 17.3.0: Ansible core 2.12.10 and Ansible collection 5.10.0.
@@ -22,8 +22,8 @@ The module contains the following input parameters:
 - `os_version`: Optional. Version of the Ubuntu operating system. Possible values are `20.04` and `22.04`. Applies on machines with the specified Ubuntu version.
   If not provided, the Ubuntu version is not verified by the module.
 
-   > Caution:: Use the deprecated Ubuntu `20.04` only on existing clusters based on this Ubuntu release.
-   > For any other use case, use the latest supported Ubuntu release `22.04`.
+  > Caution: Use the deprecated Ubuntu `20.04` only on existing clusters based on this Ubuntu release.
+  > For any other use case, use the latest supported Ubuntu release `22.04`.
 
 - `packages`: Optional. Map with packages to be installed using the `packages[*].<paramName>` parameters described below.
 - `packages[*].name`: Required. Package name.
@@ -95,7 +95,7 @@ Example of `HostOSConfiguration` with the `package` module 1.2.0 for removal of 
 
 # Versions 1.1.0 and 1.0.0 (deprecated)
 
-.. note:: The package module 1.1.0 and 1.0.0 versions are obsolete and not recommended for usage in production environments.
+> Note: The package module 1.1.0 and 1.0.0 versions are obsolete and not recommended for usage in production environments.
 
 Using the package module version 1.0.0, you can install packages from already configured mirrors only. It cannot configure additional mirrors.
 

@@ -1,6 +1,6 @@
 name: package
 description: 'Module for apt mirrors configuration and packages installation'
-version: 1.2.1-dev
+version: 1.2.2-dev
 valuesJsonSchema: schema.json
 docURL: https://docs.mirantis.com/container-cloud/latest/operations-guide/operate-managed/operate-managed-bm/day2/mcc-modules/package-module.html
 playbook: main.yaml
