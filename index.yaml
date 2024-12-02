@@ -50,5 +50,5 @@ spec:
       version: 1.2.0
       sha256sum: affc4301c188e73337931c9ce3fd68be4f76d5b2f6a29733728b34f177e1b60e
     - name: sysctl
-      version: 1.2.1-dev
-      sha256sum: 6e4bcafc0a71930ec47a73fbc9171d137aa95f9b6f5aa02f1285f8b40ff55392
+      version: 1.2.2-dev
+      sha256sum: c36b2770630741d720e9811605625d5d90edf80c63c9d110be1bd860f94c634a

@@ -1,6 +1,6 @@
 name: sysctl
 description: 'Module for sysctl configuration'
-version: 1.2.1-dev
+version: 1.2.2-dev
 valuesJsonSchema: schema.json
 docURL: https://docs.mirantis.com/container-cloud/latest/operations-guide/operate-managed/operate-managed-bm/day2/mcc-modules/sysctl-module.html
 playbook: main.yaml
