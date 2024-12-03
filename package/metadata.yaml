@@ -1,8 +1,8 @@
 name: package
 description: 'Module for apt mirrors configuration and packages installation'
-version: 1.2.2-dev
+version: 1.2.3-dev
 valuesJsonSchema: schema.json
-docURL: https://docs.mirantis.com/container-cloud/latest/operations-guide/operate-managed/operate-managed-bm/day2/mcc-modules/package-module.html
+docURL: https://github.com/Mirantis/host-os-modules/blob/main/package/README.md
 playbook: main.yaml
 deprecates:
   - version: 1.1.0

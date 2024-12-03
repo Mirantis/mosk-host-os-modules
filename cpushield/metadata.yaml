@@ -1,8 +1,8 @@
 name: cpushield
 description: 'Module for shielding CPU cores and NUMA nodes'
-version: 1.1.1-dev
+version: 1.1.2-dev
 valuesJsonSchema: schema.json
-docURL: https://docs.mirantis.com/container-cloud/latest/operations-guide/operate-managed/operate-managed-bm/day2/mcc-modules/cpushield-module-module.html
+docURL: https://github.com/Mirantis/host-os-modules/blob/main/cpushield/README.md
 playbook: main.yaml
 supportedDistributions:
   - ubuntu/jammy
