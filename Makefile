@@ -2,7 +2,7 @@ ARTIFACTS_DIR ?= $(CURDIR)/_artifacts
 MODULES_LIST ?= $(shell find * -maxdepth 0 -type d ! -name cmd ! -name $(shell basename $(ARTIFACTS_DIR)))
 PROMOTE ?= ""
 
-all: clean dirs copy-pre-commit build metadata sort-index index index-meta
+all: clean dirs build metadata sort-index index index-meta
 
 .PHONY: cicd-build
 cicd-build: all check-diff
@@ -84,18 +84,11 @@ check-diff:
 
 .PHONY: git-promote-commit
 git-promote-commit:
+	! git diff --exit-code $(MODULES_LIST) index-dev.yaml
 	! git diff --exit-code $(MODULES_LIST) index.yaml
-	git add $(MODULES_LIST) index.yaml
+	git add $(MODULES_LIST) index-dev.yaml index.yaml
 	git commit -m "[promote] Release latest modules"
 
-
-.PHONY: copy-pre-commit
-copy-pre-commit: HOOKS_PATH = $(or $(shell git config --local core.hooksPath), .git/hooks)
-copy-pre-commit:
-	@if [ ! -f "$(HOOKS_PATH)/pre-commit" ]; then \
-		echo "Copying hooks to the $(HOOKS_PATH)"; \
-		cp .githooks/pre-commit "$(HOOKS_PATH)"/pre-commit; \
-	fi
 
 .PHONY: list-modules
 list-modules:

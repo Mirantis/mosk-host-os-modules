@@ -1,5 +1,8 @@
 package domain
 
 const (
-	IndexFileName = "index.yaml"
+	ReleaseIndexFileName = "index.yaml"
+	DevIndexFileName     = "index-dev.yaml"
+	DevHOCMObjName       = "dev-mcc-modules"
+	ReleaseHOCMObjName   = "mcc-modules"
 )

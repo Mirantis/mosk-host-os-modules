@@ -45,7 +45,7 @@ var (
 		},
 		{
 			usage: "sort",
-			short: "sorts the index.yaml",
+			short: "sorts index-dev.yaml and index.yaml",
 			long:  ``, // TODO
 			run:   runSort,
 		},

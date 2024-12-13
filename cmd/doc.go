@@ -9,5 +9,5 @@
 // The commands are:
 //
 //	module	build archive(s) for module(s) and update the index.yaml
-//	sort	sorts the index.yaml
+//	sort	sorts index-dev.yaml and index.yaml
 package main

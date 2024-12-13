@@ -16,5 +16,3 @@ dist/
 
 go.work
 go.work.sum
-
-!*/pre-commit

@@ -20,17 +20,18 @@ type Config struct {
 
 // Index sorts index.yaml by name and version (if names are equal).
 func Index(cfg Config) error {
-	ia, err := filepath.Abs(domain.IndexFileName)
-	if err != nil {
-		return fmt.Errorf("failed to determine abs path for the %s: %w", domain.IndexFileName, err)
-	}
-
 	l := log.New(cfg.LogWriter, "", log.Ltime|log.Lmicroseconds|log.Lshortfile)
-	l.Printf("Sorting modules in the %s file", ia)
+	for _, indexFile := range [2]string{domain.ReleaseIndexFileName, domain.DevIndexFileName} {
+		absIndexFile, err := filepath.Abs(indexFile)
+		if err != nil {
+			return fmt.Errorf("failed to determine abs path for the %s: %w", indexFile, err)
+		}
 
-	if err := index(ia); err != nil {
-		l.Printf("Error during sorting %s: %v", ia, err)
-		return fmt.Errorf("sorting failed: %w", err)
+		l.Printf("Sorting modules in the %s file", absIndexFile)
+		if err := index(absIndexFile); err != nil {
+			l.Printf("Error during sorting %s: %v", absIndexFile, err)
+			return fmt.Errorf("sorting failed: %w", err)
+		}
 	}
 
 	return nil

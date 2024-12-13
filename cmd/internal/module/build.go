@@ -84,8 +84,9 @@ type singleData struct {
 type builder struct {
 	logger *log.Logger
 
-	archiveOutputDir string
-	indexAbsPath     string
+	archiveOutputDir    string
+	devIndexAbsPath     string
+	releaseIndexAbsPath string
 
 	modulesInfo []singleData
 
@@ -156,9 +157,16 @@ func (b *builder) Run() error {
 	}
 
 	b.logger.Printf("Updating index with %d modules", len(modules))
-	if err := b.updateIndex(modules); err != nil {
-		b.logger.Printf("Error updating index: %v", err)
-		return fmt.Errorf("index update failed: %v", err)
+	if err := b.updateDevIndex(modules); err != nil {
+		b.logger.Printf("Error updating dev index: %v", err)
+		return fmt.Errorf("dev index update failed: %v", err)
+	}
+
+	if b.promote != PromoteNone {
+		if err := b.updateReleaseIndex(); err != nil {
+			b.logger.Printf("Error updating release index: %v", err)
+			return fmt.Errorf("release index update failed: %v", err)
+		}
 	}
 
 	return nil
@@ -180,11 +188,17 @@ func (b *builder) Close() error {
 }
 
 func (b *builder) collectAbsPaths(dirs []string) error {
-	ia, err := filepath.Abs(domain.IndexFileName)
+	devIndexAbsPath, err := filepath.Abs(domain.DevIndexFileName)
 	if err != nil {
-		return fmt.Errorf("failed to determine abs path for the %s: %w", domain.IndexFileName, err)
+		return fmt.Errorf("failed to determine abs path for the %s: %w", domain.DevIndexFileName, err)
 	}
-	b.indexAbsPath = ia
+	b.devIndexAbsPath = devIndexAbsPath
+
+	releaseIndexAbsPath, err := filepath.Abs(domain.ReleaseIndexFileName)
+	if err != nil {
+		return fmt.Errorf("failed to determine abs path for the %s: %w", domain.ReleaseIndexFileName, err)
+	}
+	b.releaseIndexAbsPath = releaseIndexAbsPath
 
 	if !filepath.IsAbs(b.archiveOutputDir) {
 		archOutAbs, err := filepath.Abs(b.archiveOutputDir)
