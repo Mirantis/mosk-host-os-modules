@@ -44,6 +44,10 @@ is allowed to override `GRUB_CMDLINE_LINUX` with an empty value.
 `1280x1024x16,800x600x24,640x480` format are allowed. For example, a screen resolution must be
 divided by `,`.
 
+Following parameters are available since 1.1.0 version:
+- `grub_disable_recovery` (boolean) - defines `GRUB_DISABLE_RECOVERY`.
+- `grub_preload_modules` (array of strings) - defines `GRUB_PRELOAD_MODULES`.
+
 > Learn more:
 >
 > - [Ubuntu GRUB2 Settings](https://help.ubuntu.com/community/Grub2/Setup)

@@ -34,3 +34,9 @@ GRUB_DISABLE_LINUX_RECOVERY={{ values.options.grub_disable_linux_recovery | to_j
 {% if values.options.grub_gfxmode is defined %}
 GRUB_GFXMODE='{{ values.options.grub_gfxmode }}'
 {% endif %}
+{% if values.options.grub_disable_recovery is defined %}
+GRUB_DISABLE_RECOVERY={{ values.options.grub_disable_recovery | to_json }}
+{% endif %}
+{% if values.options.grub_preload_modules is defined %}
+GRUB_PRELOAD_MODULES='{{ values.options.grub_preload_modules | join(' ') }}'
+{% endif %}

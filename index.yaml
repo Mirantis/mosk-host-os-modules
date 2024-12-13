@@ -17,8 +17,8 @@ spec:
       version: 1.0.0
       sha256sum: fad1fbe7822076e45345df684fb7c9f3298e7749c43f3da5f874a043728d8fe4
     - name: grub_settings
-      version: 1.0.2-dev
-      sha256sum: aa138414679494016bca98693fe195f5bfe4acc47e542219f3aaa60c5b19f757
+      version: 1.0.5-dev
+      sha256sum: 87c0db016d265ec0d5e03f80b096cf25f0856ff01898e3e6807e161346059513
     - name: irqbalance
       version: 1.0.0
       sha256sum: 29318f71475e6a5fddbaa7b9a9bc2ab77b245cd6cef4f5f12b0a1d9a8f16b99d

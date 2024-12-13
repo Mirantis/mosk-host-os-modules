@@ -34,8 +34,7 @@
         },
         "grub_hidden_timeout_quiet": {
           "type": "boolean",
-          "pattern": "^[0-9]*$",
-          "description": "GRUB_HIDDEN_TIMEOUT value"
+          "description": "GRUB_HIDDEN_TIMEOUT_QUIET value"
         },
         "grub_recordfail_timeout": {
           "type": "integer",
@@ -71,6 +70,15 @@
           "type": "string",
           "pattern": "^[0-9x,]+$",
           "description": "GRUB_GFXMODE value"
+        },
+        "grub_disable_recovery": {
+          "type": "boolean",
+          "description": "GRUB_DISABLE_RECOVERY value"
+        },
+        "grub_preload_modules": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "GRUB_PRELOAD_MODULES value in form of options list"
         }
       }
     }
