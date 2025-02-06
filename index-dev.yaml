@@ -28,6 +28,9 @@ spec:
     - name: irqbalance
       version: 1.1.4-dev
       sha256sum: 6bcae103a3a0c8585a4689ab415e9d666bde68f69e3eeac867f9fc29adebcccf
+    - name: ntp
+      version: 0.0.4-dev
+      sha256sum: a98ec8d955bda22a3ebad3a5e958b9f2f858fbeecddc090a78553f8161cf1074
     - name: package
       version: 1.0.0
       sha256sum: 2c7c91206ce7a81a90e0068cd4ce7ca05eab36c4da1893555824b5ab82c7cc0e
