@@ -27,11 +27,17 @@ The module contains the following input parameters:
 
 - `cleanup_before`: Optional, boolean. Enables pre-cleanup of any module traces, including all configuration files mentioned above. Default is false (cleanup disabled).
 - `disable_reboot_request`: Optional, boolean. Disables creating files for reboot requests. Default is false (reboot will be requested).
+- `limits_filename`: Optional, string. Specifies config file name for /etc/security/limits.d/ directory (without `.conf`). Default is `98-day2-limits`.
+- `sysctl_filename`: Optional, string. Specifies config file name for /etc/sysctl.d/ directory (without `.conf`). Default is `98-day2-limits`.
 - `system`: Dictionary of `limit_item: limit_value` that will be configured at the system level (`*` for limits.conf rules, additional configuration for `nproc` and `nofile` limits).
 - `user`: Limit configurations per user, see the example below.
 
 If the parameter `cleanup_before` is set to `true` and the sections `system` and `user` are not present, the module will wipe all limits configured by itself, effectively restoring system's default parameters.
 It is advised to set `cleanup_before` to true to avoid misconfiguration of the target host.
+
+> WARNING: Changing `limits_filename` or `sysctl_filename` when limits are applied will not delete old files. This could lead to leftover traces in the OS, potentially causing unpredictable behavior. It is strongly advised to trigger the cleanup procedure described in this documentation.
+
+> WARNING: Do not use system-wide `/etc/sysctl/sysctl.conf` and `/etc/security/limits.conf` files. The module will erase the files at cleanup state which will causes unpredictable issues.
 
 > Note: Changing limits on the fly is not possible consistently. Rebooting the system is required to apply limits for all running processes.
 > To perform the reboot, create a [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html) object with a specific machine name.

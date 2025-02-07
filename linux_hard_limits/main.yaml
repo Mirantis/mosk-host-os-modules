@@ -4,8 +4,8 @@
   become: true
   tasks:
     - set_fact:
-        limits_filename: "/etc/security/limits.d/98-day2-limits.conf"
-        sysctl_filename: "/etc/sysctl.d/98-day2-fs.file-max.conf"
+        limits_filename: "/etc/security/limits.d/{{ values.limits_filename | default('98-day2-limits') }}.conf"
+        sysctl_filename: "/etc/sysctl.d/{{ values.sysctl_filename | default('98-day2-limits') }}.conf"
         systemd_system_filename: "/etc/systemd/system.conf"
         systemd_user_filename: "/etc/systemd/user.conf"
         pamd_session_filename: "/etc/pam.d/common-session"

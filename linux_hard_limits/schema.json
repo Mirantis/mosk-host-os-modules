@@ -10,6 +10,14 @@
       "type": "boolean",
       "description": "If true, LCM reboot request file creation will be skipped."
     },
+    "limits_filename": {
+      "type": "string",
+      "description": "Customize file name for limits rules in /etc/security/limits.d/ directory configured by the module"
+    },
+    "sysctl_filename": {
+      "type": "string",
+      "description": "Customize file name for sysctl parameters stored in /etc/sysctl.d/ directory configured by the module"
+    },
     "system": {
       "$ref": "#/definitions/section"
     },

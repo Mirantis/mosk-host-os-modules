@@ -29,8 +29,8 @@ spec:
       version: 1.1.4-dev
       sha256sum: 6bcae103a3a0c8585a4689ab415e9d666bde68f69e3eeac867f9fc29adebcccf
     - name: linux_hard_limits
-      version: 0.0.1-dev
-      sha256sum: 0932c66d496f7519030ebf57395a1e8070fb1df76e2fc4ab6fdb9404da725385
+      version: 0.0.2-dev
+      sha256sum: 2e376c71baebbd8528dcf37d3284131eae69ba5ae633fe739b0a93705b1f0f22
     - name: ntp
       version: 0.0.4-dev
       sha256sum: a98ec8d955bda22a3ebad3a5e958b9f2f858fbeecddc090a78553f8161cf1074
