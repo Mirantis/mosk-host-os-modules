@@ -41,10 +41,12 @@ sort-index:
 .PHONY: index
 index:
 	cp index.yaml $(ARTIFACTS_DIR)
+	cp index-dev.yaml $(ARTIFACTS_DIR)
 
 .PHONY: index-meta
 index-meta:
 	@printf 'key: binary:bm:host-os-modules:index\n' > "$(ARTIFACTS_DIR)/index.yaml.metadata.yaml"
+	@printf 'key: binary:bm:host-os-modules:index-dev\n' > "$(ARTIFACTS_DIR)/index-dev.yaml.metadata.yaml"
 
 .PHONY: metadata
 metadata: tgz

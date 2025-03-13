@@ -9,7 +9,6 @@ import (
 
 	"module-builder/internal/domain"
 
-	"github.com/Masterminds/semver/v3"
 	"gopkg.in/yaml.v3"
 )
 
@@ -20,12 +19,13 @@ func (b *builder) updateDevIndex(newModules []domain.Module) error {
 	}
 	defer indexFile.Close()
 
+	filteredModules := filterDevVersions(newModules)
+
 	// create if did not exist
 	if stat, _ := indexFile.Stat(); stat.Size() == 0 {
-		if err := createIndex(indexFile, domain.DevHOCMObjName, newModules); err != nil {
+		if err := createIndex(indexFile, domain.DevHOCMObjName, filteredModules); err != nil {
 			return fmt.Errorf("failed to create index: %w", err)
 		}
-
 		return nil
 	}
 
@@ -34,42 +34,7 @@ func (b *builder) updateDevIndex(newModules []domain.Module) error {
 		return fmt.Errorf("failed to deserialize %s: %w", b.devIndexAbsPath, err)
 	}
 
-	modulesBefore := slices.Clone(index.Spec.Modules)
-
-	indexNameVer2Idx := make(map[string]int, len(index.Spec.Modules))
-	for i, m := range index.Spec.Modules {
-		indexNameVer2Idx[m.String()] = i
-	}
-
-	for _, newModule := range newModules {
-		indexIdx, ok := indexNameVer2Idx[newModule.String()]
-		if ok {
-			if index.Spec.Modules[indexIdx].Sha256Sum == newModule.Sha256Sum {
-				b.logger.Printf("Index is up to date for the module %s-%s, nothing to do", newModule.Name, newModule.Version)
-				continue
-			}
-
-			// new module alredy exists, update to the new sha
-			b.logger.Printf("Replacing hashsum for existing module %s-%s\n\t\tOld sha256: %s\n\t\tNew sha256: %s", newModule.Name, newModule.Version, newModule.Sha256Sum, newModule.Sha256Sum)
-
-			index.Spec.Modules[indexIdx].Sha256Sum = newModule.Sha256Sum
-			continue
-		}
-
-		b.logger.Printf("Appending module %s-%s, sha256: %s", newModule.Name, newModule.Version, newModule.Sha256Sum)
-		index.Spec.Modules = append(index.Spec.Modules, newModule)
-	}
-
-	b.logger.Println("Trimming dev versions.")
-	index.Spec.Modules = cutDevVersions(index.Spec.Modules, b.promote, newModules)
-
-	// check changes
-	if slices.EqualFunc(modulesBefore, index.Spec.Modules, func(a, b domain.Module) bool {
-		return a.IsEqual(b)
-	}) {
-		b.logger.Println("Index has actual data, nothing to do.")
-		return nil
-	}
+	index.Spec.Modules = filteredModules
 
 	if err := indexFile.Truncate(0); err != nil {
 		return fmt.Errorf("failed to truncate %s: %w", indexFile.Name(), err)
@@ -87,42 +52,14 @@ func (b *builder) updateDevIndex(newModules []domain.Module) error {
 	return enc.Close()
 }
 
-func cutDevVersions(indexModules []domain.Module, promote PromoteType, newModules []domain.Module) []domain.Module {
-	result := make([]domain.Module, 0, len(indexModules))
-	newModulesNames := map[string]bool{}
-	for _, m := range newModules {
-		newModulesNames[m.Name] = true
-	}
-
-	if promote != PromoteNone {
-		for _, m := range indexModules {
-			if !newModulesNames[m.Name] || !strings.HasSuffix(m.Version, developmentTag) {
-				result = append(result, m)
-			}
-		}
-
-		return slices.Clip(result)
-	}
-
-	result = indexModules
-	// drop all dev versions for same module which are less than our new modules versions
-	for _, newModule := range newModules {
-		for i, existingModule := range result {
-			if existingModule.Name != newModule.Name ||
-				!strings.HasSuffix(existingModule.Version, developmentTag) {
-				continue
-			}
-
-			existingModuleVer, newModuleVer := semver.MustParse(existingModule.Version), semver.MustParse(newModule.Version)
-			if existingModuleVer.LessThan(newModuleVer) {
-				copy(result[i:], result[i+1:])
-				result[len(result)-1] = domain.Module{}
-				result = result[:len(result)-1]
-			}
+func filterDevVersions(modules []domain.Module) []domain.Module {
+	devModules := []domain.Module{}
+	for _, newModule := range modules {
+		if strings.HasSuffix(newModule.Version, developmentTag) {
+			devModules = append(devModules, newModule)
 		}
 	}
-
-	return slices.Clip(result)
+	return slices.Clip(devModules)
 }
 
 func createIndex(indexFile *os.File, indexName string, newModules []domain.Module) error {
@@ -155,38 +92,71 @@ func createIndex(indexFile *os.File, indexName string, newModules []domain.Modul
 	return nil
 }
 
-func (b *builder) updateReleaseIndex() error {
+func dropPromotedVersions(devIndexModules []domain.Module, newModules []domain.Module) []domain.Module {
+	result := []domain.Module{}
+	newModuleNames := make(map[string]struct{}, len(newModules))
+	for _, newModule := range newModules {
+		newModuleNames[newModule.Name] = struct{}{}
+	}
+
+	for _, oldModule := range devIndexModules {
+		if _, exists := newModuleNames[oldModule.Name]; !exists {
+			result = append(result, oldModule)
+		}
+	}
+	return result
+}
+
+func (b *builder) promoteUpdateIndexes(newModules []domain.Module) error {
 	releaseIndexFile, err := os.OpenFile(b.releaseIndexAbsPath, os.O_RDWR|os.O_CREATE, 0o644)
 	if err != nil {
 		return fmt.Errorf("failed to read %s file: %w", b.releaseIndexAbsPath, err)
 	}
 	defer releaseIndexFile.Close()
 
+	newProdModule := newModules
+	if stat, _ := releaseIndexFile.Stat(); stat.Size() != 0 {
+		var releaseIndex domain.HostOSConfigurationModules
+
+		if err := yaml.NewDecoder(releaseIndexFile).Decode(&releaseIndex); err != nil {
+			return fmt.Errorf("failed to deserialize %s: %w", b.releaseIndexAbsPath, err)
+		}
+		newProdModule = append(releaseIndex.Spec.Modules, newModules...)
+
+		if err := releaseIndexFile.Truncate(0); err != nil {
+			return fmt.Errorf("failed to truncate %s: %w", releaseIndexFile.Name(), err)
+		}
+		if _, err := releaseIndexFile.Seek(0, io.SeekStart); err != nil {
+			return fmt.Errorf("failed to seek %s: %w", releaseIndexFile.Name(), err)
+		}
+	}
+	if err := createIndex(releaseIndexFile, domain.ReleaseHOCMObjName, newProdModule); err != nil {
+		return fmt.Errorf("failed to create index: %w", err)
+	}
+
+	var devIndex domain.HostOSConfigurationModules
 	devIndexFile, err := os.OpenFile(b.devIndexAbsPath, os.O_RDWR|os.O_CREATE, 0o644)
 	if err != nil {
 		return fmt.Errorf("failed to read %s file: %w", b.devIndexAbsPath, err)
 	}
 	defer devIndexFile.Close()
 
-	var devIndex domain.HostOSConfigurationModules
 	if err := yaml.NewDecoder(devIndexFile).Decode(&devIndex); err != nil {
 		return fmt.Errorf("failed to deserialize %s: %w", b.devIndexAbsPath, err)
 	}
 
-	var releaseModules []domain.Module
-	for _, module := range devIndex.Spec.Modules {
-		moduleVersion, err := semver.NewVersion(module.Version)
-		if err != nil {
-			return fmt.Errorf("failed to parse module version %s: %w", module.Version, err)
+	updatedDevModules := dropPromotedVersions(devIndex.Spec.Modules, newModules)
+
+	if stat, _ := devIndexFile.Stat(); stat.Size() != 0 {
+		if err := devIndexFile.Truncate(0); err != nil {
+			return fmt.Errorf("failed to truncate %s: %w", devIndexFile.Name(), err)
 		}
-		if moduleVersion.Prerelease() == "" {
-			releaseModules = append(releaseModules, module)
+		if _, err := devIndexFile.Seek(0, io.SeekStart); err != nil {
+			return fmt.Errorf("failed to seek %s: %w", devIndexFile.Name(), err)
 		}
 	}
-
-	if err := createIndex(releaseIndexFile, domain.ReleaseHOCMObjName, releaseModules); err != nil {
+	if err := createIndex(devIndexFile, domain.DevHOCMObjName, updatedDevModules); err != nil {
 		return fmt.Errorf("failed to create index: %w", err)
 	}
-
 	return nil
 }

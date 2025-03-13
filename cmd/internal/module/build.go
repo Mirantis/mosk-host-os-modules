@@ -156,15 +156,15 @@ func (b *builder) Run() error {
 		return fmt.Errorf("archives baking failed: %v", merr)
 	}
 
-	b.logger.Printf("Updating index with %d modules", len(modules))
-	if err := b.updateDevIndex(modules); err != nil {
-		b.logger.Printf("Error updating dev index: %v", err)
-		return fmt.Errorf("dev index update failed: %v", err)
-	}
-
-	if b.promote != PromoteNone {
-		if err := b.updateReleaseIndex(); err != nil {
-			b.logger.Printf("Error updating release index: %v", err)
+	if b.promote == PromoteNone {
+		b.logger.Printf("Updating dev index with %d modules", len(modules))
+		if err := b.updateDevIndex(modules); err != nil {
+			b.logger.Printf("Error updating dev index: %v", err)
+			return fmt.Errorf("dev index update failed: %v", err)
+		}
+	} else {
+		if err := b.promoteUpdateIndexes(modules); err != nil {
+			b.logger.Printf("Error updating index: %v", err)
 			return fmt.Errorf("release index update failed: %v", err)
 		}
 	}

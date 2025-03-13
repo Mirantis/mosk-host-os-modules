@@ -5,26 +5,8 @@ metadata:
 spec:
   modules:
     - name: cpushield
-      version: 1.0.0
-      sha256sum: 169596f79b811a43b842cf4895c4d920ec97b46b8a9c2837690e564d34ba04d4
-    - name: cpushield
-      version: 1.1.0
-      sha256sum: 38ccb1c74ccbe4f47dc3dbfbf620a40902620a53c9792a8c7d1742844f311708
-    - name: cpushield
       version: 1.1.2-dev
       sha256sum: 20e7f5bfd227890f1558af5b56c26d690de7ad38f417ba8a7a7fb3b4284d00f7
-    - name: grub_settings
-      version: 1.0.0
-      sha256sum: fad1fbe7822076e45345df684fb7c9f3298e7749c43f3da5f874a043728d8fe4
-    - name: grub_settings
-      version: 1.1.0
-      sha256sum: c3a4f2d3a41247616f2b3ab80bf536e9c3cd850e4f9e45382376d346a1a33852
-    - name: irqbalance
-      version: 1.0.0
-      sha256sum: 29318f71475e6a5fddbaa7b9a9bc2ab77b245cd6cef4f5f12b0a1d9a8f16b99d
-    - name: irqbalance
-      version: 1.1.0
-      sha256sum: 04d753100b0a27f72816faaec0b68f9b3f87ccef4da4a32d8ae33c73f17c1db7
     - name: irqbalance
       version: 1.1.4-dev
       sha256sum: 6bcae103a3a0c8585a4689ab415e9d666bde68f69e3eeac867f9fc29adebcccf
@@ -35,26 +17,8 @@ spec:
       version: 0.0.4-dev
       sha256sum: a98ec8d955bda22a3ebad3a5e958b9f2f858fbeecddc090a78553f8161cf1074
     - name: package
-      version: 1.0.0
-      sha256sum: 2c7c91206ce7a81a90e0068cd4ce7ca05eab36c4da1893555824b5ab82c7cc0e
-    - name: package
-      version: 1.1.0
-      sha256sum: 53ec71760dd6c00c6ca668f961b94d4c162eef520a1f6cb7346a3289ac5d24cd
-    - name: package
-      version: 1.2.0
-      sha256sum: 17834eb0bc273714389e8eb8df55bd4130e030c2526ca7dc3178dee6842cbf3e
-    - name: package
       version: 1.2.3-dev
       sha256sum: df783c1160581bedb4f1f9a46d76fb90a91053cf345175f9f928f2e01dfaf617
-    - name: sysctl
-      version: 1.0.0
-      sha256sum: d78352e51792bbe64e573b841d12f54af089923c73bc185bac2dc5d0e6be84cd
-    - name: sysctl
-      version: 1.1.0
-      sha256sum: bc5fafd15666cb73379d2e63571a0de96fff96ac28e5bce603498cc1f34de299
-    - name: sysctl
-      version: 1.2.0
-      sha256sum: affc4301c188e73337931c9ce3fd68be4f76d5b2f6a29733728b34f177e1b60e
     - name: sysctl
       version: 1.2.3-dev
       sha256sum: b00c2b50aa41be4c2a8d1ebdf3d2424de7bf7358e19a509289ad89d1a119898d
