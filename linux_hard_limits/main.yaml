@@ -57,16 +57,6 @@
                 option: DefaultLimitNOFILE
                 state: absent
 
-    - name: Configure per users limits using /etc/limits.d/ config
-      when: values.users | default ({}) != {}
-      block:
-      - include_tasks: set_limit.yaml
-        with_dict: "{{ values.users }}"
-        loop_control:
-          loop_var: outer_item
-      notify:
-        - Create a reboot request
-
     - name: Configure system-wide hard limits
       when: values.system | default ({}) != {}
       block:
@@ -74,6 +64,17 @@
           with_dict: "{{ values.system }}"
           community.general.pam_limits:
             domain: "*"
+            limit_type: "hard"
+            limit_item: "{{ item.key }}"
+            value: "{{ item.value }}"
+            dest: "{{ limits_filename }}"
+          notify:
+            - Create a reboot request
+
+        - name: Repeat wildcard limits to root user
+          with_dict: "{{ values.system }}"
+          community.general.pam_limits:
+            domain: "root"
             limit_type: "hard"
             limit_item: "{{ item.key }}"
             value: "{{ item.value }}"
@@ -133,6 +134,17 @@
                 control: required
                 module_path: pam_limits.so
                 state: updated
+
+    # if defined root limits will override system-wide default limits here
+    - name: Configure per users limits using /etc/limits.d/ config
+      when: values.users | default ({}) != {}
+      block:
+      - include_tasks: set_limit.yaml
+        with_dict: "{{ values.users }}"
+        loop_control:
+          loop_var: outer_item
+      notify:
+        - Create a reboot request
 
   handlers:
   - name: Reload sysctl
