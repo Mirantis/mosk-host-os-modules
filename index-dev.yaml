@@ -17,8 +17,8 @@ spec:
       version: 0.0.4-dev
       sha256sum: a98ec8d955bda22a3ebad3a5e958b9f2f858fbeecddc090a78553f8161cf1074
     - name: package
-      version: 1.2.3-dev
-      sha256sum: df783c1160581bedb4f1f9a46d76fb90a91053cf345175f9f928f2e01dfaf617
+      version: 1.2.4-dev
+      sha256sum: c59aa0f4c2bd91f2b8d22ecb73ed56bc28113077da6b445153304a4d2321304b
     - name: sysctl
       version: 1.2.3-dev
       sha256sum: b00c2b50aa41be4c2a8d1ebdf3d2424de7bf7358e19a509289ad89d1a119898d

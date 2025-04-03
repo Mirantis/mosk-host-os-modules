@@ -25,6 +25,9 @@
             "type": "string",
             "$ref": "#/definitions/nonEmptyString"
           },
+          "version": {
+            "type": "string"
+          },
           "state": {
             "type": "string",
             "pattern": "present|absent|build-dep|latest|fixed"
@@ -35,7 +38,16 @@
                 "type": "string",
                 "pattern": "yes|no"
               },
-              { "type": "boolean"}
+              { "type": "boolean" }
+            ]
+          },
+          "allow_downgrade": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "yes|no"
+              },
+              { "type": "boolean" }
             ]
           },
           "autoremove": {
@@ -66,7 +78,25 @@
             ]
           }
         },
-        "required": ["name"]
+        "required": ["name"],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "version": { "type": "string" }
+              },
+              "required": ["version"]
+            },
+            "then": {
+              "not": {
+                "properties": {
+                  "state": { "const": "latest" }
+                },
+                "required": ["state"]
+              }
+            }
+          }
+        ]
       },
       "additionalProperties": false
     },

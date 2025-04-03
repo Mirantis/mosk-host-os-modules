@@ -1,25 +1,53 @@
 # package module
 
-The package module allows the operator to configure additional Ubuntu mirrors and install required packages from these mirrors
-on cluster machines using the mechanism implemented in the day-2 operations API. Under the hood, this module is based on
-[apt](https://docs.ansible.com/ansible/2.9/modules/apt_module.html) and
-[apt_repository](https://docs.ansible.com/ansible/2.9/modules/apt_repository_module.html) Ansible modules.
+The package module allows the operator to configure additional Ubuntu mirrors and install required packages from these mirrors on cluster machines using the mechanism implemented in the day-2 operations API. Under the hood, this module is based on [apt](https://docs.ansible.com/ansible/2.9/modules/apt_module.html) and [apt_repository](https://docs.ansible.com/ansible/2.9/modules/apt_repository_module.html) Ansible modules.
 
-> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 20.04 and 22.04
-> in the Cluster releases 16.3.0 and 17.3.0: Ansible core 2.12.10 and Ansible collection 5.10.0.
+> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 22.04 in the Cluster releases 17.3.0: Ansible core 2.12.10 and Ansible collection 5.10.0.
 >
-> To verify the Ansible version in a specific Cluster release, refer to
-> [Container Cloud documentation: Release notes - Cluster releases](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases.html).
+> To verify the Ansible version in a specific Cluster release, refer to [Container Cloud documentation: Release notes - Cluster releases](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases.html).
 > Use the *Artifacts > System and MCR artifacts* section of the corresponding Cluster release. For example, for
 > [17.3.0](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases/17-x/17-3-x/17-3-0/17-3-0-artifacts.html#system-and-mcr-artifacts).
 
-# Version 1.2.0 (latest)
+# Version 1.3.0 (latest)
+
+Using the package module 1.3.0, you can configure additional Ubuntu mirrors and install packages from these mirrors on cluster machines with ability to specify and pin package versions. See documentation for the module version 1.2.0 below for more details.
+New parameters comparing to 1.2.0 module version:
+
+- `packages[*].allow_downgrade`: Optional. Parameter that enables downgrading of installed package. It is advised to set `yes` when `version` is specified. Defaults to `no`.
+- `packages[*].version`: Optional. Package version to be installed and pinned via apt-preferences pinning. It is advised to set `allow_downgrade` to `yes` when `version` is specified.
+
+# Configuration examples
+
+Example of `HostOSConfiguration` with the `package` module 1.3.0 for installation of a package with specific version:
+
+```
+    apiVersion: kaas.mirantis.com/v1alpha1
+    kind: HostOSConfiguration
+    metadata:
+      name: package-200
+      namespace: default
+    spec:
+      configs:
+        - module: package
+          moduleVersion: 1.3.0
+          values:
+            packages:
+            - name: pinnedPackageName
+              state: present
+              version: 1.0.5-rc1
+              allow_downgrade: yes
+      machineSelector:
+        matchLabels:
+          day2-custom-label: "true"
+```
+
+# Version 1.2.0 (deprecated)
 
 Using the package module 1.2.0, you can configure additional Ubuntu mirrors and install packages from these mirrors on cluster machines.
 The module contains the following input parameters:
 
 - `dpkg_options`: Optional. Comma-separated list of `dpkg` options to be used during package installation or removal. Defaults to `force-confold,force-confdef`.
-- `os_version`: Optional. Version of the Ubuntu operating system. Possible values are `20.04` and `22.04`. Applies on machines with the specified Ubuntu version.
+- `os_version`: Optional. Version of the Ubuntu operating system. Possible values are `20.04` and `22.04`. Applies to machines with the specified Ubuntu version.
   If not provided, the Ubuntu version is not verified by the module.
 
   > Caution: Use the deprecated Ubuntu `20.04` only on existing clusters based on this Ubuntu release.

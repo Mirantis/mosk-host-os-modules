@@ -26,6 +26,30 @@
           when:
             - values.repositories is defined
 
+        - name: Delete existing apt preferences file for pinning
+          ansible.builtin.file:
+            path: "/etc/apt/preferences.d/day2-{{ item.name }}.pref"
+            state: absent
+          with_items: "{{ values.packages | default ([]) }}"
+          when:
+            - item.state | default("absent") == "absent" or item.version | default('') == ''
+
+        - name: Create apt preferences file for pinning
+          ansible.builtin.copy:
+            dest: "/etc/apt/preferences.d/day2-{{ item.name }}.pref"
+            content: |
+              Package: {{ item.name }}
+              Pin: version {{ item.version }}
+              Pin-Priority: 1001
+          with_items: "{{ values.packages | default ([]) }}"
+          when:
+            - item.version | default ('') != ''
+            - item.state != "absent"
+
+        - name: Update apt cache
+          ansible.builtin.apt:
+            update_cache: yes
+
         - name: Install a list of packages
           apt:
             name: "{{ item.name }}"
@@ -36,6 +60,23 @@
             purge: "{{ item.purge | default ('no') }}"
             update_cache: "{{ item.update_cache | default ('no') }}"
           with_items: "{{ values.packages | default ([]) }}"
+          when:
+            - item.version | default('') == ''
+
+        - name: Install a list of packages with version
+          apt:
+            name: "{{ item.name }}={{ item.version }}"
+            state: "{{ item.state | default ('present') }}"
+            dpkg_options: "{{ values.dpkg_options | default ('force-confold,force-confdef') }}"
+            allow_unauthenticated: "{{ item.allow_unauthenticated | default ('no') }}"
+            allow_downgrade: "{{ item.allow_downgrade | default ('no') }}"
+            autoremove: "{{ item.autoremove | default ('no') }}"
+            purge: "{{ item.purge | default ('no') }}"
+            update_cache: "{{ item.update_cache | default ('no') }}"
+          with_items: "{{ values.packages | default ([]) }}"
+          when:
+            - item.version | default('') != ''
+
 
       when:
         - ansible_distribution == 'Ubuntu'
