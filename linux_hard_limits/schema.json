@@ -50,7 +50,7 @@
         },
         "nofile": {
           "type": "integer",
-          "minimum": -1,
+          "minimum": 524288,
           "maximum": 2147483584
         },
         "rss": {
@@ -64,7 +64,7 @@
         },
         "nproc": {
           "type": "integer",
-          "minimum": -1,
+          "minimum": 1048576,
           "maximum": 4194304
         },
         "as": {

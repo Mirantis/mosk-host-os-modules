@@ -42,6 +42,10 @@ It is advised to set `cleanup_before` to true to avoid misconfiguration of the t
 > Note: Changing limits on the fly is not possible consistently. Rebooting the system is required to apply limits for all running processes.
 > To perform the reboot, create a [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html) object with a specific machine name.
 
+> WARNING: on host with running Docker Swarm setting limits value for `system` or `root` lower than listed below will cause Docker Swarm to fail:
+> `nproc`: `1048576`
+> `nofile`: `524288`
+
 # Configuration examples
 
 Example of `HostOSConfiguration` with the `linux_hard_limit` module 1.0.0 for configuring limits for maximum open files and maximum processes:
