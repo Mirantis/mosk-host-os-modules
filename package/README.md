@@ -11,12 +11,12 @@ The package module allows the operator to configure additional Ubuntu mirrors an
 # Version 1.3.0 (latest)
 
 Using the package module 1.3.0, you can configure additional Ubuntu mirrors and install packages from these mirrors on cluster machines with ability to specify and pin package versions. See documentation for the module version 1.2.0 below for more details.
-New parameters comparing to 1.2.0 module version:
+Compared to version 1.2.0, the package module 1.3.0 introduces the following parameters:
 
-- `packages[*].allow_downgrade`: Optional. Parameter that enables downgrading of installed package. It is advised to set `yes` when `version` is specified. Defaults to `no`.
-- `packages[*].version`: Optional. Package version to be installed and pinned via apt-preferences pinning. It is advised to set `allow_downgrade` to `yes` when `version` is specified.
+- `packages[*].allow_downgrade`: Optional. Enables downgrading of installed package. Mirantis recommends setting  `yes` when `version` is specified. Defaults to `no`.
+- `packages[*].version`: Optional. Package version to be installed and pinned using the apt_preferences pinning. Mirantis recommends setting `allow_downgrade` to `yes` when `version` is specified.
 
-# Configuration examples
+# Configuration example
 
 Example of `HostOSConfiguration` with the `package` module 1.3.0 for installation of a package with specific version:
 
