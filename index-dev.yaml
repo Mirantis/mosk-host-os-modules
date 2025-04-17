@@ -16,9 +16,6 @@ spec:
     - name: ntp
       version: 0.0.4-dev
       sha256sum: a98ec8d955bda22a3ebad3a5e958b9f2f858fbeecddc090a78553f8161cf1074
-    - name: package
-      version: 1.2.5-dev
-      sha256sum: cb7b05e1c28ceec2f1c60581fb6c5497d8b5be7e0072726611836f787151cc68
     - name: sysctl
       version: 1.2.3-dev
       sha256sum: b00c2b50aa41be4c2a8d1ebdf3d2424de7bf7358e19a509289ad89d1a119898d
