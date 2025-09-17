@@ -55,64 +55,72 @@ func makeArchive(moduleName, moduleVersion, outputDir string) (string, error) {
 
 func buildTarGz(root string, w io.Writer) error {
 	gw := gzip.NewWriter(w)
-	tw := tar.NewWriter(gw)
+	defer gw.Close()
 
-	// Iterate over files and add them to the tar archive
+	tw := tar.NewWriter(gw)
+	defer tw.Close()
+
 	walkErr := filepath.Walk(root, func(filePath string, fileInfo fs.FileInfo, err error) error {
-		// Return on any error
 		if err != nil {
 			return err
 		}
-		// Skip directories and symlinks, pick only regular files
-		if !fileInfo.Mode().IsRegular() {
+
+		// Make path inside archive relative to root
+		relPath, err := filepath.Rel(root, filePath)
+		if err != nil {
+			return fmt.Errorf("failed to compute relative path: %w", err)
+		}
+		// Normalize to forward slashes (POSIX style)
+		relPath = filepath.ToSlash(relPath)
+
+		// Special case for the root itself: skip adding
+		if relPath == "." {
 			return nil
 		}
 
-		file, err := os.Open(filePath)
+		// Create tar header from FileInfo
+		header, err := tar.FileInfoHeader(fileInfo, "")
 		if err != nil {
-			return fmt.Errorf("failed to open %s to be archived: %w", filePath, err)
+			return fmt.Errorf("failed to create header for %s: %w", filePath, err)
 		}
 
-		// Manage file header
-		header, err := tar.FileInfoHeader(fileInfo, fileInfo.Name())
-		if err != nil {
-			_ = file.Close()
-			return fmt.Errorf("failed to create header for %s: %w", fileInfo.Name(), err)
+		// Ensure reproducibility
+		header.Name = relPath
+		if fileInfo.IsDir() {
+			// Directory entries should end with "/"
+			header.Name += "/"
+			header.Mode = 0o755
+		} else {
+			header.Mode = 0o600
 		}
-
-		// Make sure this tarball is reproducible by setting clean header for file
 		header.ModTime = time.Unix(0, 0)
 		header.ChangeTime = time.Unix(0, 0)
 		header.AccessTime = time.Unix(0, 0)
-		header.Mode = 0o600
 		header.Uid = 0
 		header.Gid = 0
 		header.Gname = "root"
 		header.Uname = "root"
 
+		// Write header
 		if err := tw.WriteHeader(header); err != nil {
-			_ = file.Close()
-			return fmt.Errorf("failed to write file header for %s: %w", header.Name, err)
+			return fmt.Errorf("failed to write header for %s: %w", relPath, err)
 		}
 
-		// Copy file content to tar archive
-		if _, err = io.Copy(tw, file); err != nil {
-			return fmt.Errorf("failed to copy file %s into archive: %w", header.Name, err)
-		}
+		// Write file contents if it's a regular file
+		if fileInfo.Mode().IsRegular() {
+			file, err := os.Open(filePath)
+			if err != nil {
+				return fmt.Errorf("failed to open %s: %w", filePath, err)
+			}
+			defer file.Close()
 
-		if err := file.Close(); err != nil {
-			return fmt.Errorf("failed to close file %s: %w", header.Name, err)
+			if _, err := io.Copy(tw, file); err != nil {
+				return fmt.Errorf("failed to copy file %s into archive: %w", relPath, err)
+			}
 		}
 
 		return nil
 	})
-
-	if err := tw.Close(); err != nil {
-		return fmt.Errorf("failed to close tar writer: %w", err)
-	}
-	if err := gw.Close(); err != nil {
-		return fmt.Errorf("failed to close gunzip writer: %w", err)
-	}
 
 	if walkErr != nil {
 		return fmt.Errorf("failed to build an archive: %w", walkErr)
