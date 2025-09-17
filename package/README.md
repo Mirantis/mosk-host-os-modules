@@ -2,13 +2,18 @@
 
 The package module allows the operator to configure additional Ubuntu mirrors and install required packages from these mirrors on cluster machines using the mechanism implemented in the day-2 operations API. Under the hood, this module is based on [apt](https://docs.ansible.com/ansible/2.9/modules/apt_module.html) and [apt_repository](https://docs.ansible.com/ansible/2.9/modules/apt_repository_module.html) Ansible modules.
 
-> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 22.04 in the Cluster releases 17.3.0: Ansible core 2.12.10 and Ansible collection 5.10.0.
+> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 22.04 and 24.04: Ansible core 2.12.10 and Ansible collection 5.10.0.
 >
 > To verify the Ansible version in a specific Cluster release, refer to [Container Cloud documentation: Release notes - Cluster releases](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases.html).
 > Use the *Artifacts > System and MCR artifacts* section of the corresponding Cluster release. For example, for
 > [17.3.0](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases/17-x/17-3-x/17-3-0/17-3-0-artifacts.html#system-and-mcr-artifacts).
 
-# Version 1.3.0 (latest)
+
+# Version 1.4.0 (latest)
+
+Added support of Ubuntu `24.04`.
+
+# Version 1.3.0 (deprecated)
 
 Using the package module 1.3.0, you can configure additional Ubuntu mirrors and install packages from these mirrors on cluster machines with ability to specify and pin package versions. See documentation for the module version 1.2.0 below for more details.
 Compared to version 1.2.0, the package module 1.3.0 introduces the following parameters:
@@ -51,7 +56,7 @@ The module contains the following input parameters:
   If not provided, the Ubuntu version is not verified by the module.
 
   > Caution: Use the deprecated Ubuntu `20.04` only on existing clusters based on this Ubuntu release.
-  > For any other use case, use the latest supported Ubuntu release `22.04`.
+  > For any other use case, use the latest supported Ubuntu release.
 
 - `packages`: Optional. Map with packages to be installed using the `packages[*].<paramName>` parameters described below.
 - `packages[*].name`: Required. Package name.

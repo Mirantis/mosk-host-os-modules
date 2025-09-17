@@ -3,8 +3,8 @@
 The irqbalance module is designed to allow the cloud operator to install and configure the `irqbalance` service
 on cluster machines using the day-2 operations API.
 
-> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 20.04 and 22.04
-> in the Cluster releases 16.3.0 and 17.3.0: Ansible core 2.12.10 and Ansible collection 5.10.0.
+> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 20.04, 22.04, 24.04:
+> Ansible core 2.12.10 and Ansible collection 5.10.0.
 >
 > To verify the Ansible version in a specific Cluster release, refer to
 > [Container Cloud documentation: Release notes - Cluster releases](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases.html).

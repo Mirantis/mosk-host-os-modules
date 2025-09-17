@@ -5,17 +5,20 @@ metadata:
 spec:
   modules:
     - name: cpushield
-      version: 1.1.2-dev
-      sha256sum: 20e7f5bfd227890f1558af5b56c26d690de7ad38f417ba8a7a7fb3b4284d00f7
-    - name: irqbalance
       version: 1.1.4-dev
-      sha256sum: 6bcae103a3a0c8585a4689ab415e9d666bde68f69e3eeac867f9fc29adebcccf
+      sha256sum: 031210c7d93d37d063ca4deb44e4a0a2e6d9e8966d1e767e2009cd3b9dbd75eb
+    - name: irqbalance
+      version: 1.1.7-dev
+      sha256sum: b08342c2dc641f4385f2c9ac7f3a7495037ba33237b3a1e5881415711088cdfc
     - name: linux_hard_limits
       version: 0.0.4-dev
       sha256sum: cabd7d1758425f7d21cea94e8e9dc18d50c272d0f82b2a505118898e5f070c55
     - name: ntp
       version: 0.0.4-dev
       sha256sum: a98ec8d955bda22a3ebad3a5e958b9f2f858fbeecddc090a78553f8161cf1074
+    - name: package
+      version: 1.3.4-dev
+      sha256sum: c066d9d3d7d5333ee2950fc7ef69a1decb3203d3d0c43974d1fecd89153e8748
     - name: sysctl
-      version: 1.2.3-dev
-      sha256sum: b00c2b50aa41be4c2a8d1ebdf3d2424de7bf7358e19a509289ad89d1a119898d
+      version: 1.2.6-dev
+      sha256sum: ed707cb00a10fed112249a5a719c7c35545a3d6cd5cf4751ec9b15eb793724ea

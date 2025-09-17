@@ -1,6 +1,6 @@
 # cpushield module
 
-> Warning: Only Ubuntu 22.04 is supported with cgroup v2 and systemd. For example, this
+> Warning: Ubuntu 22.04 and 24.04 are supported with cgroup v2 and systemd. For example, this
 > configuration supports Unified Control Group hierarchy mode, which is not supported by cgroup v1.
 
 The cpushield day-2 module allows configuring CPU and NUMA node shielding.
@@ -55,7 +55,7 @@ other cores exclusively, for example, for pinning vCPUs of virtual machines (usi
 
 ## Examples
 
-To pin system processes onto CPU cores 0, 1, 2, and 5 for Ubuntu 22.04 in the cgroup v2 use case:
+To pin system processes onto CPU cores 0, 1, 2, and 5 for Ubuntu 22.04 or 24.04 in the cgroup v2 use case:
 
 ```
 ---

@@ -10,7 +10,7 @@
   "properties": {
     "os_version": {
       "type": "string",
-      "pattern": "2[02]\\.04"
+      "pattern": "2[024]\\.04"
     },
     "dpkg_options": {
       "type": "string",
