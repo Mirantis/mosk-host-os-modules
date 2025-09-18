@@ -34,6 +34,9 @@ spec:
     - name: package
       version: 1.3.0
       sha256sum: 72e1cf75bcff788b3bb2d1206f0304ae9fc6fb40e09ca81727635f54533e8239
+    - name: package
+      version: 1.4.0
+      sha256sum: e8688fc90beabdc6a4ea387ced46f1b8b30114036bfdbb89efeca0f2f4e0cf2b
     - name: sysctl
       version: 1.0.0
       sha256sum: d78352e51792bbe64e573b841d12f54af089923c73bc185bac2dc5d0e6be84cd

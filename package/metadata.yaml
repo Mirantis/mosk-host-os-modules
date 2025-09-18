@@ -1,6 +1,6 @@
 name: package
 description: 'Module for apt mirrors configuration and packages installation'
-version: 1.3.4-dev
+version: 1.4.0
 valuesJsonSchema: schema.json
 docURL: https://github.com/Mirantis/host-os-modules/blob/main/package/README.md
 playbook: main.yaml
