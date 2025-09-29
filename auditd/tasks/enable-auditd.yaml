@@ -1,0 +1,82 @@
+
+- name: "Ensure auditd is installed"
+  become: true
+  package:
+    name: "{{ auditd_packages }}"
+    state: "present"
+    use: "{{ auditd_package_manager }}"
+  retries: 3
+  delay: 5
+  register: package_install
+  until: package_install is succeeded
+  notify: "start auditd"
+
+- name: "Ensure auditd service is enabled"
+  become: true
+  systemd:
+    name: "{{ auditd_service }}"
+    enabled: true
+    masked: false
+  notify: "start auditd"
+
+- name: "Ensure systemd-journald-audit socket is enabled"
+  systemd:
+    name: "systemd-journald-audit.socket"
+    enabled: true
+    masked: false
+  when:
+    - auditd_journald_logging_enabled
+
+- name: "Ensure systemd-journald-audit socket is disabled"
+  systemd:
+    name: "systemd-journald-audit.socket"
+    enabled: false
+    masked: true
+  when:
+    - not auditd_journald_logging_enabled
+
+- name: "Check if auditd service is running" # noqa: command-instead-of-module
+  become: true
+  command: "systemctl is-active {{ auditd_service }}"
+  register: auditd_is_active
+  failed_when: false
+  changed_when: auditd_is_active is failed
+  notify: "start auditd"
+
+- name: "Install safe augenrules"
+  become: true
+  copy:
+    src: augenrules-safe
+    dest: "{{ auditd_augenrules_safe_path }}"
+    mode: "0755"
+
+- name: "Create override dir for systemd service"
+  become: true
+  file:
+    path: "/etc/systemd/system/auditd.service.d"
+    state: directory
+    mode: "0755"
+
+- name: "Create override for auditd systemd service"
+  become: true
+  copy:
+    content: "{{ lookup('template', 'override.conf.j2') }}"
+    dest: "/etc/systemd/system/auditd.service.d/override.conf"
+    mode: '0644'
+  notify: "systemd daemon reload"
+
+- name: "Get NeedDaemonReload for auditd service configuration" # noqa: command-instead-of-module
+  become: true
+  command: "systemctl show --property=NeedDaemonReload --value {{ auditd_service }}"
+  changed_when: false
+  register: auditd_need_daemon_reload
+
+- name: "Trigger systemd daemon reload"
+  debug:
+    msg: "Systemd auditd configuration needs daemon reloading"
+  changed_when: true
+  notify: "systemd daemon reload"
+  when:
+    - auditd_need_daemon_reload.stdout == 'yes'
+
+

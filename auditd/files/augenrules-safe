@@ -1,0 +1,57 @@
+#!/bin/bash
+
+function sanitize_audit_rules() {
+  local src="${DestinationFile}"
+  local dst="${TmpRules}.safe"
+
+  cat "${src}" | awk '
+/^\-w/ { if (system("test -e $(dirname " $2 ")") == 0) {
+  print $0;
+} else {
+  print "Bad path \"" $2 "\", skipping rule \"" $0 "\" ..." > "/dev/stderr";
+  print "# " $0;
+}; next; }
+// { print $0; }
+' > "${dst}"
+}
+
+function install_audit_rules() {
+  local src="${TmpRules}.safe"
+  local dst="${DestinationFile}.safe"
+
+  cmp -s "${src}" "${dst}" > /dev/null 2>&1
+  if [[ $? -eq 0 ]]; then
+    echo "$0: No change (${dst})"
+    rm -f "${src}"
+    return
+  fi
+
+  # Otherwise we install the new file
+  if [[ -f "${dst}" ]]; then
+    cp "${dst}" "${dst}.${ASuffix}"
+  fi
+
+  # We copy the file so that it gets the right selinux label
+  cp "${src}" "${dst}"
+  chmod 0640 "${dst}"
+
+  # Restore context on MLS system. /tmp is SystemLow & audit.rules is SystemHigh
+  if [[ -x /sbin/restorecon ]]; then
+    /sbin/restorecon -F "${dst}"
+  fi
+
+  rm -f "${src}"
+}
+
+function try_load() {
+  sanitize_audit_rules
+  install_audit_rules
+
+  if [[ ${LoadRules} -eq 1 ]]; then
+    /sbin/auditctl -R "${DestinationFile}.safe"
+    RETVAL=$?
+  fi
+}
+readonly -f try_load
+
+source /sbin/augenrules

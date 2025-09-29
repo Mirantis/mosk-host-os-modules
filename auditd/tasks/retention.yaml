@@ -1,0 +1,75 @@
+---
+# NOTE: By default this parameter (`max_log_file`) is already configured,
+#       this task allows to customize it.
+- name: "Ensure audit log storage size is configured"
+  become: true
+  lineinfile:
+    path: "{{ auditd_config_file }}"
+    regexp: "^max_log_file\\s*="
+    line: "max_log_file = {{ auditd_max_log_file }}"
+  when:
+    - auditd_max_log_file is defined
+  notify: "restart auditd"
+
+- name: "Configure log file rotation"
+  when:
+    - auditd_max_log_file_action is defined
+  block:
+    - set_fact:
+        max_log_file_action: "{{ auditd_max_log_file_action }}"
+      when:
+        - auditd_max_log_file_action != 'compress'
+
+    - set_fact:
+        max_log_file_action: "keep_logs"
+      when:
+        - auditd_max_log_file_action == 'compress'
+
+    - name: "Ensure audit logs are not automatically deleted"
+      become: true
+      lineinfile:
+        path: "{{ auditd_config_file }}"
+        regexp: "^max_log_file_action\\s*="
+        line: "max_log_file_action = {{ max_log_file_action }}"
+      notify: "restart auditd"
+
+    - name: "Enable log compression cron task"
+      become: true
+      when:
+        - auditd_max_log_file_action == 'compress'
+      template:
+        src: "auditd.cron.j2"
+        dest: "/etc/cron.daily/auditd.cron"
+        owner: "root"
+        group: "root"
+        mode: "0755"
+
+# NOTE: This is dangerous!!!
+- name: "Ensure system is disabled when audit logs are full"
+  when:
+    - auditd_may_halt_system is defined
+    - auditd_may_halt_system
+  block:
+    - name: "Ensure space_left_action == email"
+      become: true
+      lineinfile:
+        path: "{{ auditd_config_file }}"
+        regex: "^space_left_action\\s*="
+        line: "space_left_action = email"
+      notify: "restart auditd"
+
+    - name: "Ensure action_mail_acct == root"
+      become: true
+      lineinfile:
+        path: "{{ auditd_config_file }}"
+        regex: "^action_mail_acct\\s*="
+        line: "action_mail_acct = root"
+      notify: "restart auditd"
+
+    - name: "Ensure admin_space_left_action == halt"
+      become: true
+      lineinfile:
+        path: "{{ auditd_config_file }}"
+        regex: "^admin_space_left_action\\s*="
+        line: "admin_space_left_action = halt"
+      notify: "restart auditd"

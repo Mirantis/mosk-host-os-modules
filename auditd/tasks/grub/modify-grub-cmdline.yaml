@@ -1,0 +1,74 @@
+---
+- name: "Remove `audit` kernel cmdline parameter"
+  when:
+    - not (auditd_enabled and auditd_enabled_at_boot)
+  block:
+    - name: "Remove `audit` kernel cmdline parameter"
+      kernel_cmdline:
+        cmdline: "{{ grub_cmdline_linux }}"
+        name: 'audit'
+        state: purge
+      register: result
+
+    - name: "Save grub cmdline in hostvar" # noqa: no-handler
+      set_fact:
+        grub_cmdline_linux: "{{ result.cmdline }}"
+      when:
+        - result.changed
+
+- name: "Set `audit` kernel cmdline parameter"
+  when:
+    - auditd_enabled
+    - auditd_enabled_at_boot
+  block:
+    - name: "Set `audit` kernel cmdline parameter"
+      kernel_cmdline:
+        cmdline: "{{ grub_cmdline_linux }}"
+        name: 'audit'
+        value: '1'
+        remove_duplicates: true
+        state: present
+      register: result
+
+    - name: "Save grub cmdline in hostvar" # noqa: no-handler
+      set_fact:
+        grub_cmdline_linux: "{{ result.cmdline }}"
+      when:
+        - result.changed
+
+- name: "Remove `audit_backlog_limit` kernel cmdline parameter"
+  when:
+    - auditd_backlog_limit is not defined
+  block:
+    - name: "Remove `audit_backlog_limit` kernel cmdline parameter"
+      kernel_cmdline:
+        cmdline: "{{ grub_cmdline_linux }}"
+        name: 'audit_backlog_limit'
+        state: purge
+      register: result
+
+    - name: "Save grub cmdline in hostvar" # noqa: no-handler
+      set_fact:
+        grub_cmdline_linux: "{{ result.cmdline }}"
+      when:
+        - result.changed
+
+- name: "Set `audit_backlog_limit` kernel cmdline parameter"
+  when:
+    - auditd_enabled
+    - auditd_backlog_limit is defined
+  block:
+    - name: "Set `audit_backlog_limit` kernel cmdline parameter"
+      kernel_cmdline:
+        cmdline: "{{ grub_cmdline_linux }}"
+        name: 'audit_backlog_limit'
+        value: "{{ auditd_backlog_limit }}"
+        remove_duplicates: true
+        state: present
+      register: result
+
+    - name: "Save grub cmdline in hostvar" # noqa: no-handler
+      set_fact:
+        grub_cmdline_linux: "{{ result.cmdline }}"
+      when:
+        - result.changed

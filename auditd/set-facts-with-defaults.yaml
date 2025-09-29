@@ -1,0 +1,75 @@
+- name: "Set Debian-related facts"
+  set_fact:
+    auditd_package_manager: "apt"
+    auditd_packages:
+      - auditd
+      - audispd-plugins
+    auditd_service: auditd.service
+    auditd_rules_loader_service: auditd-rules-loader.service
+    auditd_config_file: "/etc/audit/auditd.conf"
+
+- name: "Set module facts"
+  set_fact:
+    auditd_enabled: "{{ values.enabled }}"
+    auditd_enabled_at_boot: "{{ values.enabledAtBoot | default(false) }}"
+    auditd_rules_group: "{{ values.auditdRulesGroup | default('root') }}"
+    auditd_rules_owner: "{{ values.auditdRulesOwner | default('root') }}"
+    auditd_rules_mode: "{{ values.auditdRulesMode | default('0600') }}"
+    auditd_journald_logging_enabled: "{{ valued.auditdJournaldLoggingEnabled | default(false) }}"
+    auditd_augenrules_safe_path: "/usr/sbin/augenrules-safe"
+    auditd_may_halt_system: "{{ values.mayHaltSystem | default(false) }}"
+    auditd_preset_rules: "{{ values.presetRules | default('all,!immutable') }}"
+    auditd_preset_groups:
+      docker-cis-rules:
+        - "docker"
+      ubuntu-cis-rules:
+        - "scope"
+        - "actions"
+        - "time-change"
+        - "system-locale"
+        - "privileged"
+        - "access"
+        - "identity"
+        - "perm-mod"
+        - "mounts"
+        - "session"
+        - "logins"
+        - "delete"
+        - "mac-policy"
+        - "modules"
+
+    auditd_available_presets:
+      - "docker"
+      - "scope"
+      - "actions"
+      - "time-change"
+      - "system-locale"
+      - "privileged"
+      - "access"
+      - "identity"
+      - "perm-mod"
+      - "mounts"
+      - "session"
+      - "logins"
+      - "delete"
+      - "mac-policy"
+      - "modules"
+      - "immutable"
+
+# note(vkhlyunev): this name conversions are added in order to keep same style across module's playbooks
+# TODO(vkhlyunev): refactor whole module to values.X approach
+- when: values.backlogLimit is defined
+  set_fact:
+    auditd_backlog_limit: "{{ values.backlogLimit }}"
+- when: values.maxLogFile is defined
+  set_fact:
+    auditd_max_log_file: "{{ values.maxLogFile }}"
+- when: values.maxLogFileAction is defined
+  set_fact:
+    auditd_max_log_file_action: "{{ values.maxLogFileAction }}"
+- when: values.maxLogFileKeep is defined
+  set_fact:
+    auditd_max_log_file_keep: "{{ values.maxLogFileKeep }}"
+- when: values.customRules is defined
+  set_fact:
+    auditd_custom_rules: "{{ values.customRules }}"

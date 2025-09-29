@@ -1,0 +1,58 @@
+---
+- set_fact:
+    grub_cmdline_linux_found: false
+    grub_cmdline_linux_changed: false
+
+- name: "Get list of files in /etc/default/grub.d"
+  find:
+    paths:
+      - '/etc/default/grub.d'
+    file_type: file
+  register: grub_config_files
+
+- name: "Update /etc/default/grub.d file(s)"
+  include_tasks: update-grub-config.yaml
+  vars:
+    grub_config_filename: "{{ item.path }}"
+  loop: "{{ grub_config_files.files }}"
+
+- name: "Get /etc/default/grub stat"
+  stat:
+    path: "/etc/default/grub"
+  register: grub_config_file
+
+- name: "Update /etc/default/grub"
+  include_tasks: "update-grub-config.yaml"
+  vars:
+    grub_config_filename: "/etc/default/grub"
+  when:
+    - grub_config_file.stat.exists
+
+- name: "Update grub.conf"
+  become: true
+  when:
+    - grub_cmdline_linux_changed
+  block:
+    - name: "Generate test grub config"
+      command: 'grub-mkconfig -o /tmp/grub.cfg'
+      register: grub_mkconfig
+      changed_when: true
+
+    - name: "Validate test grub config"
+      command: 'grub-script-check /tmp/grub.cfg'
+      when:
+        - grub_mkconfig is succeeded
+      register: grub_script_check
+      changed_when: false
+
+    - name: "Update grub"
+      command: "update-grub"
+      when:
+        - grub_mkconfig is succeeded
+        - grub_script_check is succeeded
+      changed_when: true
+
+    - name: "Remove test grub config"
+      file:
+        path: "/tmp/grub.cfg"
+        state: absent

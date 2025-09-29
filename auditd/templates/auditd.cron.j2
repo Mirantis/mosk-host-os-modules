@@ -1,0 +1,22 @@
+#!/bin/bash
+# Based on https://access.redhat.com/solutions/661603
+
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+# What utility to use for log compression
+# Change to bzip2 or xz as desired
+COMPRESS=gzip
+# Number of compressed log files to keep
+KEEP={{ auditd_max_log_file_keep | default(5) }}
+
+for ifile in $(find /var/log/audit/ -regex '.*\/audit\.log\.[0-9]+'); do
+  dir_name=$(dirname ${ifile})
+  file_name=$(basename ${ifile})
+  file_index=${file_name##*.}
+  file_index_0=$(printf "%05d" ${file_index})
+  ofile="${dir_name}/${file_name%.*}.${file_index_0}"
+  mv "${ifile}" "${ofile}"
+  ${COMPRESS} -v "${ofile}"
+done
+
+rm -f -v $(find /var/log/audit/ -regextype posix-extended -regex '.*\/audit\.log\.[0-9]+\.(xz|gz|bz2)$' | sort -n | head -n -${KEEP})

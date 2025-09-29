@@ -1,0 +1,45 @@
+---
+- set_fact:
+    grub_cmdline_linux: ""
+    grub_cmdline_linux_orig: ""
+
+- name: "Get existing GRUB_CMDLIME_LINUX"
+  shell: >
+    unset GRUB_CMDLINE_LINUX;
+    source {{ grub_config_filename }};
+    echo ${GRUB_CMDLINE_LINUX};
+  args:
+    executable: "/bin/bash"
+  register: grub_defaults
+  changed_when: false
+
+- set_fact:
+    grub_cmdline_linux_found: true
+    grub_cmdline_linux: "{{ grub_defaults.stdout }}"
+    grub_cmdline_linux_orig: "{{ grub_defaults.stdout }}"
+  when:
+    - grub_defaults.stdout | length
+
+- name: "Modify grub config"
+  when:
+    - ( grub_cmdline_linux | length ) or
+      ( grub_config_filename == '/etc/default/grub' and
+        not grub_cmdline_linux_found )
+  block:
+    - name: "Modify GRUB_CMDLINE_LINUX"
+      include_tasks: modify-grub-cmdline.yaml
+
+    - name: "Update grub config file"
+      when:
+        - grub_cmdline_linux != grub_cmdline_linux_orig
+      block:
+        - set_fact:
+            grub_cmdline_linux_changed: true
+
+        - name: "Update grub config"
+          lineinfile:
+            path: "{{ grub_config_filename }}"
+            regexp: "^GRUB_CMDLINE_LINUX="
+            line: 'GRUB_CMDLINE_LINUX="{{ grub_cmdline_linux | trim }}"'
+            create: true
+            mode: '0600'

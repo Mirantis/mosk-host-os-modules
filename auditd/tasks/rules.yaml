@@ -1,0 +1,28 @@
+---
+- include_tasks: preset-rules.yaml
+  when:
+    - auditd_preset_rules is defined
+
+- name: "Process custom rules"
+  become: true
+  block:
+    - name: "Remove custom rules"
+      file:
+        path: "/etc/audit/rules.d/60-custom.rules"
+        state: absent
+      when:
+        - auditd_custom_rules is not defined
+      notify: "restart auditd"
+
+    - name: "Configure custom rules"
+      copy:
+        content: |
+          {{ auditd_custom_rules | b64decode }}
+        dest: "/etc/audit/rules.d/60-custom.rules"
+        owner: "root"
+        group: "root"
+        mode: "0600"
+      when:
+        - auditd_custom_rules is defined
+      notify: "restart auditd"
+

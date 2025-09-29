@@ -1,0 +1,49 @@
+---
+
+- name: "Configure auditd"
+  hosts: all
+  become: true
+  tasks:
+    - import_tasks: set-facts-with-defaults.yaml
+
+    - name: "Disable auditd"
+      include_tasks: tasks/disable-auditd.yaml
+      when: not auditd_enabled
+
+    - name: "Enable and configure auditd"
+      when: auditd_enabled
+      block:
+      - include_tasks: tasks/enable-auditd.yaml
+      - include_tasks: tasks/retention.yaml
+      - include_tasks: tasks/rules.yaml
+
+    - include_tasks: tasks/grub/main.yaml
+
+  handlers:
+    - name: "systemd daemon reload"
+      systemd:
+        daemon_reload: true
+
+    - name: "restart auditd"
+      systemd:
+        name: "{{ auditd_service }}"
+        state: restarted
+      when:
+        - auditd_enabled
+
+    - name: "start auditd"
+      become: true
+      systemd:
+        name: "{{ auditd_service }}"
+        state: started
+      when:
+        - auditd_enabled
+
+    - name: "enable auditd-rules-loader"
+      systemd:
+        name: "{{ auditd_rules_loader_service }}"
+        enabled: true
+        masked: false
+      when:
+        - auditd_enabled
+

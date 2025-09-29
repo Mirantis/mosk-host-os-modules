@@ -1,0 +1,95 @@
+---
+- set_fact:
+    enabled_presets: []
+
+- name: "Resolve list of requested preset names"
+  set_fact:
+    resolved_presets: |
+      {%- set RESULT = dict({'err':[], 'val':[]}) -%}
+      {%- macro resolve_name(name,negative=false) -%}
+        {%- set var = dict({ 'name':name|trim, 'negative':negative }) -%}
+        {%- if var.name.startswith('!') -%}
+          {%- set _ = var.update({ 'name':var.name[1:], 'negative':true }) -%}
+        {%- endif -%}
+        {%- if var.name == 'all' -%}
+          {%- for _name in auditd_available_presets -%}
+            {%- set _ = RESULT.val.append((var.negative|ternary('!', '')) ~ _name) -%}
+          {%- endfor -%}
+        {%- elif var.name in auditd_preset_groups -%}
+          {%- for _name in auditd_preset_groups[var.name] -%}
+            {{- resolve_name(_name,var.negative) -}}
+          {%- endfor -%}
+        {%- elif var.name in auditd_available_presets -%}
+          {%- set _ = RESULT.val.append((var.negative|ternary('!', '')) ~ var.name) -%}
+        {%- elif var.name != 'none' -%}
+          {%- set _ = RESULT.err.append("'"~ var.name ~ "' is not a valid group or preset name") -%}
+        {%- endif -%}
+      {%- endmacro -%}
+      {%- for name in auditd_preset_rules | split(',') -%}
+        {{- resolve_name(name) -}}
+      {%- endfor -%}
+      {{ RESULT | to_json | from_json }}
+
+- assert:
+    that: not resolved_presets.err
+    fail_msg: "Failed to resolve some preset name(s): {{ resolved_presets.err | join(', ') }}!"
+
+- name: "Translate resolved preset names to enabled presets."
+  set_fact:
+    enabled_presets: "{{ enabled_presets + [preset] }}"
+  loop: "{{ auditd_available_presets }}"
+  loop_control:
+    loop_var: preset
+  vars:
+    __presets: "{{ resolved_presets.val | sort | unique }}"
+  when:
+    - "preset in __presets"
+    - "'!'~preset not in __presets"
+
+- name: "Remove disabled preset rules"
+  become: true
+  file:
+    path: "/etc/audit/rules.d/50-{{ preset }}.rules"
+    state: absent
+  loop: "{{ auditd_available_presets | difference(enabled_presets) }}"
+  loop_control:
+    loop_var: preset
+  notify: "restart auditd"
+
+- name: "Configure enabled preset rules"
+  become: true
+  template:
+    src: "audit/{{ preset }}.rules.j2"
+    dest: "/etc/audit/rules.d/50-{{ preset }}.rules"
+    owner: "{{ auditd_rules_owner }}"
+    group: "{{ auditd_rules_group }}"
+    mode: "{{ auditd_rules_mode }}"
+  loop: "{{ enabled_presets }}"
+  loop_control:
+    loop_var: preset
+  when:
+    - preset != "privileged"
+  notify: "restart auditd"
+
+- name: "Ensure use of privileged commands is collected"
+  become: true
+  when:
+    - enabled_presets is contains("privileged")
+  block:
+    - name: "Get list of privileged programs"
+      shell: |
+        for i in $(df | grep '^/dev' | awk '{ print $NF }'); do
+          find $i -xdev -type f -perm -4000 -o -type f -perm -2000 2>/dev/null
+        done
+      register: priv_procs
+      changed_when: false
+      check_mode: false
+
+    - name: "Configure rules for 'privileged'"
+      template:
+        src: "audit/privileged.rules.j2"
+        dest: "/etc/audit/rules.d/50-privileged.rules"
+        owner: "{{ auditd_rules_owner }}"
+        group: "{{ auditd_rules_group }}"
+        mode: "{{ auditd_rules_mode }}"
+      notify: "restart auditd"
