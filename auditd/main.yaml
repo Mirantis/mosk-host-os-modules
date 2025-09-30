@@ -38,12 +38,3 @@
         state: started
       when:
         - auditd_enabled
-
-    - name: "enable auditd-rules-loader"
-      systemd:
-        name: "{{ auditd_rules_loader_service }}"
-        enabled: true
-        masked: false
-      when:
-        - auditd_enabled
-

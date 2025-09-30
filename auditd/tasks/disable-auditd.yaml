@@ -12,15 +12,6 @@
     - ansible_facts.services[auditd_service].status is defined
     - ansible_facts.services[auditd_service].status != 'not-found'
 
-- name: "Ensure auditd-rules-loader service is disabled"
-  systemd:
-    name: "{{ auditd_rules_loader_service }}"
-    enabled: false
-    masked: true
-  when:
-    - ansible_facts.services is contains(auditd_rules_loader_service)
-    - ansible_facts.services[auditd_rules_loader_service].status is defined
-    - ansible_facts.services[auditd_rules_loader_service].status != 'not-found'
 
 - name: "Disable log compression cron task"
   file:

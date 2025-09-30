@@ -5,7 +5,6 @@
       - auditd
       - audispd-plugins
     auditd_service: auditd.service
-    auditd_rules_loader_service: auditd-rules-loader.service
     auditd_config_file: "/etc/audit/auditd.conf"
 
 - name: "Set module facts"
