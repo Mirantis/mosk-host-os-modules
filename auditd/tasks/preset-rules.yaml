@@ -54,7 +54,9 @@
   loop: "{{ auditd_available_presets | difference(enabled_presets) }}"
   loop_control:
     loop_var: preset
-  notify: "restart auditd"
+  notify:
+    - "restart auditd"
+    - "request reboot"
 
 - name: "Configure enabled preset rules"
   become: true
@@ -69,7 +71,9 @@
     loop_var: preset
   when:
     - preset != "privileged"
-  notify: "restart auditd"
+  notify:
+    - "restart auditd"
+    - "request reboot"
 
 - name: "Ensure use of privileged commands is collected"
   become: true
@@ -92,4 +96,6 @@
         owner: "{{ auditd_rules_owner }}"
         group: "{{ auditd_rules_group }}"
         mode: "{{ auditd_rules_mode }}"
-      notify: "restart auditd"
+      notify:
+        - "restart auditd"
+        - "request reboot"

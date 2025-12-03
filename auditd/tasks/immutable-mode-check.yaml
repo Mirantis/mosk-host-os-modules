@@ -1,0 +1,9 @@
+---
+- name: Check for existing immutable rules; request reboot if found any
+  shell: "auditctl -s | grep 'enabled 2'"
+  register: immutable_mode_cmd
+  failed_when: false
+  changed_when: false
+
+- set_fact:
+    immutable_mode_detected: "{{ immutable_mode_cmd.rc == 0}}"

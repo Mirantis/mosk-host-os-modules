@@ -14,6 +14,7 @@
       when: auditd_enabled
       block:
       - include_tasks: tasks/enable-auditd.yaml
+      - include_tasks: tasks/immutable-mode-check.yaml
       - include_tasks: tasks/retention.yaml
       - include_tasks: tasks/rules.yaml
 
@@ -30,6 +31,7 @@
         state: restarted
       when:
         - auditd_enabled
+        - not immutable_mode_detected
 
     - name: "start auditd"
       become: true
@@ -38,3 +40,19 @@
         state: started
       when:
         - auditd_enabled
+        - not immutable_mode_detected
+
+    - name: Create /run/day2
+      ansible.builtin.file:
+        path: /run/day2
+        state: directory
+      listen: "request reboot"
+      when: immutable_mode_detected
+
+    - name: Update /run/day2/reboot-required with reboot reason
+      ansible.builtin.lineinfile:
+        path: "/run/day2/reboot-required"
+        line: "Reboot is required by auditd: immutable mode detected, unable to restart auditd without reboot"
+        create: true
+      listen: "request reboot"
+      when: immutable_mode_detected

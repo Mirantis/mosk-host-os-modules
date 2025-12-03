@@ -9,7 +9,6 @@
   delay: 5
   register: package_install
   until: package_install is succeeded
-  notify: "start auditd"
 
 - name: "Ensure auditd service is enabled"
   become: true
@@ -17,7 +16,6 @@
     name: "{{ auditd_service }}"
     enabled: true
     masked: false
-  notify: "start auditd"
 
 - name: "Ensure systemd-journald-audit socket is enabled"
   systemd:
@@ -41,7 +39,11 @@
   register: auditd_is_active
   failed_when: false
   changed_when: auditd_is_active is failed
-  notify: "start auditd"
+  notify:
+  - "start auditd"
+  # reboot will be required if service was
+  # configured to immutable mode, started with that and then stopped
+  - "request reboot"
 
 - name: "Install safe augenrules"
   become: true
