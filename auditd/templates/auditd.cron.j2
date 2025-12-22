@@ -7,7 +7,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin
 # Change to bzip2 or xz as desired
 COMPRESS=gzip
 # Number of compressed log files to keep
-KEEP={{ auditd_max_log_file_keep | default(5) }}
+KEEP={{ auditd_max_log_file_keep }}
 
 for ifile in $(find /var/log/audit/ -regex '.*\/audit\.log\.[0-9]+'); do
   dir_name=$(dirname ${ifile})

@@ -7,13 +7,11 @@
     path: "{{ auditd_config_file }}"
     regexp: "^max_log_file\\s*="
     line: "max_log_file = {{ auditd_max_log_file }}"
-  when:
-    - auditd_max_log_file is defined
   notify: "restart auditd"
 
 - name: "Configure log file rotation"
   when:
-    - auditd_max_log_file_action is defined
+    - auditd_max_log_file_action | string | length != 0
   block:
     - set_fact:
         max_log_file_action: "{{ auditd_max_log_file_action }}"

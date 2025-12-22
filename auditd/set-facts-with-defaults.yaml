@@ -18,6 +18,11 @@
     auditd_augenrules_safe_path: "/usr/sbin/augenrules-safe"
     auditd_may_halt_system: "{{ values.mayHaltSystem | default(false) }}"
     auditd_preset_rules: "{{ values.presetRules | default('all,!immutable') }}"
+    auditd_backlog_limit: "{{ values.backlogLimit | default('') }}"
+    auditd_max_log_file: "{{ values.maxLogFile | default(8) }}"
+    auditd_max_log_file_action: "{{ values.maxLogFileAction | default('') }}"
+    auditd_max_log_file_keep: "{{ values.maxLogFileKeep | default(5) }}"
+    auditd_custom_rules: "{{ values.customRules | default('') }}"
     auditd_preset_groups:
       docker-cis-rules:
         - "docker"
@@ -54,21 +59,3 @@
       - "mac-policy"
       - "modules"
       - "immutable"
-
-# note(vkhlyunev): this name conversions are added in order to keep same style across module's playbooks
-# TODO(vkhlyunev): refactor whole module to values.X approach
-- when: values.backlogLimit is defined
-  set_fact:
-    auditd_backlog_limit: "{{ values.backlogLimit }}"
-- when: values.maxLogFile is defined
-  set_fact:
-    auditd_max_log_file: "{{ values.maxLogFile }}"
-- when: values.maxLogFileAction is defined
-  set_fact:
-    auditd_max_log_file_action: "{{ values.maxLogFileAction }}"
-- when: values.maxLogFileKeep is defined
-  set_fact:
-    auditd_max_log_file_keep: "{{ values.maxLogFileKeep }}"
-- when: values.customRules is defined
-  set_fact:
-    auditd_custom_rules: "{{ values.customRules }}"

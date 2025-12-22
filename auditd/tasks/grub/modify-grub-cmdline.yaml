@@ -38,7 +38,7 @@
 
 - name: "Remove `audit_backlog_limit` kernel cmdline parameter"
   when:
-    - auditd_backlog_limit is not defined
+    - auditd_backlog_limit | string | length == 0
   block:
     - name: "Remove `audit_backlog_limit` kernel cmdline parameter"
       kernel_cmdline:
@@ -56,7 +56,7 @@
 - name: "Set `audit_backlog_limit` kernel cmdline parameter"
   when:
     - auditd_enabled
-    - auditd_backlog_limit is defined
+    - auditd_backlog_limit | string | length != 0
   block:
     - name: "Set `audit_backlog_limit` kernel cmdline parameter"
       kernel_cmdline:

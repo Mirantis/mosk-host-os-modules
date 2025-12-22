@@ -11,7 +11,7 @@
         path: "/etc/audit/rules.d/60-custom.rules"
         state: absent
       when:
-        - auditd_custom_rules is not defined
+        - auditd_custom_rules | string | length == 0
       notify: "restart auditd"
 
     - name: "Configure custom rules"
@@ -23,6 +23,6 @@
         group: "root"
         mode: "0600"
       when:
-        - auditd_custom_rules is defined
+        - auditd_custom_rules | string | length != 0
       notify: "restart auditd"
 
