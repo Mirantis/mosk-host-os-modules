@@ -6,16 +6,16 @@ spec:
   modules:
     - name: auditd
       version: 0.0.10-dev
-      sha256sum: 9dd1dffd99d045c2024672e0c2a3964a86f040c3c4f3c2f431c1691a34e9a55a
+      sha256sum: 35c5ea6eea29ba5ce23b97222272068a6443dccf78bcefde9ebf99ea95ee0c52
     - name: cpushield
       version: 1.1.4-dev
-      sha256sum: 031210c7d93d37d063ca4deb44e4a0a2e6d9e8966d1e767e2009cd3b9dbd75eb
+      sha256sum: 1bd11574c49df55641203ee4dfd016e65bf410adfb9b22948a16c03a74e739dc
     - name: irqbalance
       version: 1.1.7-dev
-      sha256sum: b08342c2dc641f4385f2c9ac7f3a7495037ba33237b3a1e5881415711088cdfc
+      sha256sum: 19b5911113646129018dee835742c2e1b4de7f391b10d6b3b39ce5afa403af43
     - name: linux_hard_limits
       version: 0.0.4-dev
-      sha256sum: cabd7d1758425f7d21cea94e8e9dc18d50c272d0f82b2a505118898e5f070c55
+      sha256sum: 3c2b733b1ccc4cab82593e686d2e47e64899d4bd6f158651ad0bd155758745ef
     - name: sysctl
       version: 1.2.6-dev
-      sha256sum: ed707cb00a10fed112249a5a719c7c35545a3d6cd5cf4751ec9b15eb793724ea
+      sha256sum: 3e01a289164438e7025924f4b852b267872db36b841fd6fd9517fa2b70d2f700

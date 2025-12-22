@@ -4,11 +4,12 @@ The `auditd` module allows configuring the auditd rules at runtime on cluster ma
 
 > **Note:** This module is implemented for the Ubuntu 22.04 and 24.04 host OS.
 >
-> **Note:** This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu XX.04 in the Cluster release XXX: **Ansible Core XXX** and **Ansible Collection XXX**.
-> To verify the Ansible version in a specific Cluster release, refer to
-> [Container Cloud documentation: Release notes – Cluster releases](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases.html).
-> Use the **Artifacts > System and MCR artifacts** section of the corresponding Cluster release.
-> For example, see [17.3.0 artifacts](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases/17-x/17-3-x/17-3-0/17-3-0-artifacts.html#system-and-mcr-artifacts).
+> **Note:** This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu XX.04 in the Cluster release XXX: **Ansible Core XXX** and **Ansible Collection XXX**.
+>
+> To verify the Ansible version in a specific Cluster release, refer to the
+> **Release artifacts > Management cluster artifacts > System and MCR artifacts**
+> section of the required management Cluster release in
+> [MOSK documentation: Release notes](https://docs.mirantis.com/mosk/latest/release-notes.html).
 
 ---
 

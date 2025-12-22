@@ -4,11 +4,12 @@ The `linux_hard_limit` module allows the operator to manage system hard limits a
 
 > Note: This module is implemented only for the Ubuntu 22.04 host OS.
 
-> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 22.04 in the Cluster release 17.3.0: Ansible Core 2.12.10 and Ansible Collection 5.10.0.
+> Note: This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 22.04 in the Cluster release 17.3.0: Ansible Core 2.12.10 and Ansible Collection 5.10.0.
 >
-> To verify the Ansible version in a specific Cluster release, refer to
-> [Container Cloud documentation: Release notes - Cluster releases](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases.html).
-> Use the *Artifacts > System and MCR artifacts* section of the corresponding Cluster release. For example, for [17.3.0](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases/17-x/17-3-x/17-3-0/17-3-0-artifacts.html#system-and-mcr-artifacts).
+> To verify the Ansible version in a specific Cluster release, refer to the
+> **Release artifacts > Management cluster artifacts > System and MCR artifacts**
+> section of the required management Cluster release in
+> [MOSK documentation: Release notes](https://docs.mirantis.com/mosk/latest/release-notes.html).
 
 # Version 1.0.0 (latest)
 
@@ -40,7 +41,7 @@ It is advised to set `cleanup_before` to true to avoid misconfiguration of the t
 > WARNING: Do not use system-wide `/etc/sysctl/sysctl.conf` and `/etc/security/limits.conf` files. The module will erase the files at cleanup state which will causes unpredictable issues.
 
 > Note: Changing limits on the fly is not possible consistently. Rebooting the system is required to apply limits for all running processes.
-> To perform the reboot, create a [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html) object with a specific machine name.
+> To perform the reboot, create a [GracefulRebootRequest](https://docs.mirantis.com/mosk/latest/api/mgmt-api/lcm-api/graceful-reboot-request.html) object with a specific machine name.
 
 > WARNING: on host with running Docker Swarm setting limits value for `system` or `root` lower than listed below will cause Docker Swarm to fail:
 > `nproc`: `1048576`
