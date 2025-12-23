@@ -19,7 +19,7 @@ The module allows overriding any GRUB2 option. For example, if `/etc/default/gru
 > creation of a reboot request by setting `disable_reboot_request` to `true`.
 >
 > To perform a reboot, create a
-> [GracefulRebootRequest](https://docs.mirantis.com/mosk/latest/api/mgmt-api/lcm-api/graceful-reboot-request.html)
+> [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html)
 > object with a specific machine name.
 
 ## Supported GRUB2 parameters (under the `options` key)

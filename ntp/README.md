@@ -2,13 +2,13 @@
 
 The ntp module allows the operator to manage ntp servers at runtime on cluster machines using the mechanism implemented in the day-2 operations API.
 
-> Note: This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 22.04
+> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 22.04
 > in the Cluster releases 16.3.0 and 17.3.0: Ansible core 2.12.10 and Ansible collection 5.10.0.
 >
-> To verify the Ansible version in a specific Cluster release, refer to the
-> **Release artifacts > Management cluster artifacts > System and MCR artifacts**
-> section of the required management Cluster release in
-> [MOSK documentation: Release notes](https://docs.mirantis.com/mosk/latest/release-notes.html).
+> To verify the Ansible version in a specific Cluster release, refer to
+> [Container Cloud documentation: Release notes - Cluster releases](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases.html).
+> Use the *Artifacts > System and MCR artifacts* section of the corresponding Cluster release. For example, for
+> [17.3.0](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases/17-x/17-3-x/17-3-0/17-3-0-artifacts.html#system-and-mcr-artifacts).
 
 # Version 1.0.0 (latest)
 

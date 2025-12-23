@@ -4,13 +4,13 @@ The sysctl module allows the operator to manage kernel parameters at runtime on 
 operations API.
 Under the hood, this module is based on the [sysctl](https://docs.ansible.com/ansible/2.9/modules/sysctl_module.html) Ansible module.
 
-> Note: This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 20.04, 22.04, 24.04:
+> Note: This module is implemented and validated against the following Ansible versions provided by MCC for Ubuntu 20.04, 22.04, 24.04:
 > Ansible core 2.12.10 and Ansible collection 5.10.0.
 >
-> To verify the Ansible version in a specific Cluster release, refer to the
-> **Release artifacts > Management cluster artifacts > System and MCR artifacts**
-> section of the required management Cluster release in
-> [MOSK documentation: Release notes](https://docs.mirantis.com/mosk/latest/release-notes.html).
+> To verify the Ansible version in a specific Cluster release, refer to
+> [Container Cloud documentation: Release notes - Cluster releases](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases.html).
+> Use the *Artifacts > System and MCR artifacts* section of the corresponding Cluster release. For example, for
+> [17.3.0](https://docs.mirantis.com/container-cloud/latest/release-notes/cluster-releases/17-x/17-3-x/17-3-0/17-3-0-artifacts.html#system-and-mcr-artifacts).
 
 # Version 1.2.0 (latest)
 

@@ -28,7 +28,7 @@ other cores exclusively, for example, for pinning vCPUs of virtual machines (usi
 > to LCM controller that reboot is required for the corresponding LCM machine. You can disable
 > creation of reboot request by setting `disable_reboot_request` to `true`.
 >
-> To perform the reboot, create a [GracefulRebootRequest](https://docs.mirantis.com/mosk/latest/api/mgmt-api/lcm-api/graceful-reboot-request.html)
+> To perform the reboot, create a [GracefulRebootRequest](https://docs.mirantis.com/container-cloud/latest/api/api-graceful-reboot-request.html)
 > object with a specific machine name.
 
 - `system_cpus` (required) - list of CPU cores to use for system processes.

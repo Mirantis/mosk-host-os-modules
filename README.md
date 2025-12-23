@@ -1,6 +1,6 @@
-# Host OS configuration ansible modules for MOSK
+# Host OS configuration ansible modules for MCC
 
-This repository contains Ansible modules for Mirantis OpenStack for Kubernetes (MOSK) that are released to customers.
+This repository contains Ansible modules for Mirantis Container Cloud (MCC) that are released to customers.
 
 Modules manage various system configurations through Ansible playbooks, adhering to specific schemas and metadata requirements.
 
@@ -57,25 +57,24 @@ Requirements:
 
 Modules and `index.yaml` are built using `cmd/module-builder.go` to ensure reproduceable tar.gz builds.
 
-## MOSK implementation details
+## MCC implementation details
 
 Modules are installed and controlled through two CRs in the management cluster:
 
-- [HostOSConfiguration](https://docs.mirantis.com/mosk/latest/api/mgmt-api/hoc-api/host-os-configuration.html)
-- [HostOSConfigurationModule](https://docs.mirantis.com/mosk/latest/api/mgmt-api/hoc-api/host-os-configuration-modules.html)
+- [HostOSConfiguration](https://docs.mirantis.com/container-cloud/latest/api/bm/host-os-configuration.html)
+- [HostOSConfigurationModule](https://docs.mirantis.com/container-cloud/latest/api/bm/host-os-configuration-modules.html)
 
 Ansible module execution is implemented using the existing LCM mechanism, by creating an additional `StateItem` for mapped `LCMMachines`
-in MOSK management cluster. For more implementation details, see
-[MOSK documentation](https://docs.mirantis.com/mosk/latest/ops/bm-operations/host-os-conf/day2-intro.html).
+in MCC management cluster. For more implementation details, see (MOSK documentation)[https://docs.mirantis.com/mosk/latest/ops/bm-operations/host-os-conf/day2-intro.html].
 
-## Modules provided by MOSK
+## Modules provided by MCC
 
-Modules provided by MOSK use the designated `HostOSConfigurationModule` object named `MOSK-modules`.
+Modules provided by MCC use the designated `HostOSConfigurationModule` object named `mcc-modules`.
 All other `HostOSConfigurationModule` objects contain custom modules.
 
 > Warning:: Do not modify the `mcc-modules` object, any changes will be overwritten with data from an external source.
 
-Modules provided by MOSK are described in this repository in their respective folders.
+Modules provided by MCC are described in this repository in their respective folders.
 
 ## Release process
 
