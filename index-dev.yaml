@@ -5,17 +5,26 @@ metadata:
 spec:
   modules:
     - name: auditd
-      version: 0.0.10-dev
-      sha256sum: 9dd1dffd99d045c2024672e0c2a3964a86f040c3c4f3c2f431c1691a34e9a55a
+      version: 0.0.11-dev
+      sha256sum: c6a45808718e657697730685210e825b22fa01d4ec3561266a0171a0458faffa
     - name: cpushield
-      version: 1.1.4-dev
-      sha256sum: 031210c7d93d37d063ca4deb44e4a0a2e6d9e8966d1e767e2009cd3b9dbd75eb
+      version: 1.1.5-dev
+      sha256sum: 28c5ce50f427b94cf1136e1db51001eef4b38e3ea75b3f4a145c704ce04fd6a8
+    - name: grub_settings
+      version: 1.1.1-dev
+      sha256sum: d479cd1f8f06bb5a4cd7f3f08c7bf26b6ae428ea1ef9621b7878bc058cde5f81
     - name: irqbalance
-      version: 1.1.7-dev
-      sha256sum: b08342c2dc641f4385f2c9ac7f3a7495037ba33237b3a1e5881415711088cdfc
+      version: 1.1.8-dev
+      sha256sum: 00d46c75426f6681eae89c7e570ed89a9ec4df2944198bd6fdd2c7c586f8cfeb
     - name: linux_hard_limits
-      version: 0.0.4-dev
-      sha256sum: cabd7d1758425f7d21cea94e8e9dc18d50c272d0f82b2a505118898e5f070c55
+      version: 0.0.5-dev
+      sha256sum: da8b3aac3cdaa3c4cec7d599bf1273af9f54e52f0c004b24a38f0c02ef895065
+    - name: ntp
+      version: 1.0.1-dev
+      sha256sum: a161422e227a1b376013b8bea12cebe9f742a4cb907c23261bf7fd6e1b3e8292
+    - name: package
+      version: 1.4.1-dev
+      sha256sum: c1d74728680b411655b2ff797883c26911634f095a1d3858ff778617e0a4272e
     - name: sysctl
-      version: 1.2.6-dev
-      sha256sum: ed707cb00a10fed112249a5a719c7c35545a3d6cd5cf4751ec9b15eb793724ea
+      version: 1.2.7-dev
+      sha256sum: 72fa03149a91d4c295f1a7e88a6195aa40767fa0e7322d8972f780a0e5134533
