@@ -6,12 +6,20 @@
   tasks:
     - import_tasks: set-facts-with-defaults.yaml
 
+    - name: "Purge auditd hoc"
+      include_tasks: tasks/purge-auditd.yaml
+      when: auditd_purge
+
     - name: "Disable auditd"
       include_tasks: tasks/disable-auditd.yaml
-      when: not auditd_enabled
+      when:
+        - not auditd_enabled
+        - not auditd_purge
 
     - name: "Enable and configure auditd"
-      when: auditd_enabled
+      when:
+        - auditd_enabled
+        - not auditd_purge
       block:
       - include_tasks: tasks/enable-auditd.yaml
       - include_tasks: tasks/immutable-mode-check.yaml

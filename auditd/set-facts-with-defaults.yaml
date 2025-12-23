@@ -9,6 +9,7 @@
 
 - name: "Set module facts"
   set_fact:
+    auditd_purge: "{{ values.purge | default(false) }}"
     auditd_enabled: "{{ values.enabled }}"
     auditd_enabled_at_boot: "{{ values.enabledAtBoot | default(false) }}"
     auditd_rules_group: "{{ values.auditdRulesGroup | default('root') }}"

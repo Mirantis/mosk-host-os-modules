@@ -1,0 +1,17 @@
+---
+- name: "Erase all rules in /etc/audit/rules.d/ except default 'audit.rules'"
+  become: true
+  block:
+    - name: Find all files except audit.rules
+      find:
+        paths: "/etc/audit/rules.d/"
+        file_type: file
+        recurse: no
+        excludes: "audit.rules"
+      register: files_to_delete
+
+    - name: Remove the files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ files_to_delete.files }}"

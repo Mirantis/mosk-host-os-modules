@@ -1,0 +1,17 @@
+---
+- include_tasks: tasks/disable-auditd.yaml
+
+- include_tasks: tasks/cleanup-rules.yaml
+
+- name: Remove auditd packages
+  package:
+    name: "{{ auditd_packages }}"
+    use: "{{ auditd_package_manager }}"
+    state: absent
+    purge: yes
+  notify: "systemd daemon reload"
+
+- name: "Remove safe augenrules"
+  file:
+    path: "{{ auditd_augenrules_safe_path }}"
+    state: absent
