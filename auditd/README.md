@@ -17,6 +17,9 @@ The `auditd` module allows configuring the auditd rules at runtime on cluster ma
 
 The module supports the following input parameters:
 
+* **`purge`**: `bool`, optional, default: `false`
+  Removes the auditd package and other module traces. If set to `true`, no other parameters take effect.
+
 * **`enabled`**: `bool`, mandatory
   Enables or disables auditd.
   CIS 4.1.1.1, CIS 4.1.1.2.
@@ -25,12 +28,12 @@ The module supports the following input parameters:
   Configures GRUB so that processes capable of being audited can be audited even if they start up before auditd.
   CIS 4.1.1.3.
 
-* **`backlogLimit`**: `int`, optional, default: undefined
+* **`backlogLimit`**: `int`, optional, default: `undefined`
   During boot, if `audit=1`, then the backlog holds 64 records.
   If more than 64 records are created during boot, auditd records may be lost and malicious activity could go undetected.
   CIS 4.1.1.4.
 
-* **`maxLogFile`**: `int`, optional, default: undefined
+* **`maxLogFile`**: `int`, optional, default: `8`
   Configures the maximum size of the audit log file. Once the log reaches this size, it is rotated and a new log is started.
   CIS 4.1.2.1.
 
@@ -96,7 +99,7 @@ CIS 4.1.2.3.
   * CIS 1.2.10
   * CIS 1.2.11
 
-* **`customRules`**: `string`, optional, default: undefined
+* **`customRules`**: `string`, optional, default: `undefined`
   Raw text content for a `60-custom.rules` file, applicable to any architecture.
 
 ---

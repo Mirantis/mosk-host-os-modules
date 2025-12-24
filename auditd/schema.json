@@ -16,11 +16,13 @@
     },
     "backlogLimit": {
       "type": "integer",
+      "minimum": 1,
       "description": "Integer, default - none. Configures the backlog to hold records. If during boot audit=1 is configured, the backlog holds 64 records. If more than 64 records are created during boot, auditd records will be lost with a potential malicious activity being undetected. CIS rule: 4.1.1.4."
     },
     "maxLogFile": {
       "type": "integer",
-      "description": "Integer, default - none. Configures the maximum size of the audit log file. Once the log reaches the maximum size, it is rotated and a new log file is created. CIS rule: 4.1.2.1."
+      "minimum": 1,
+      "description": "Integer, default - 8. Configures the maximum size in MB of the audit log file. Once the log reaches the maximum size, it is rotated and a new log file is created. CIS rule: 4.1.2.1."
     },
     "maxLogFileAction": {
       "type": "string",
@@ -29,6 +31,7 @@
     },
     "maxLogFileKeep": {
       "type": "integer",
+      "minimum": 1,
       "description": "Integer, default - 5. Defines the number of compressed log files to keep under the /var/log/auditd/ directory. Requires auditd_max_log_file_action=compress."
     },
     "mayHaltSystem": {
@@ -41,8 +44,21 @@
     },
     "presetRules": {
       "type": "string",
-      "description": "String, default - none. Comma-separated list of built-in preset rules (access, actions, delete, docker, identity, immutable, logins, mac-policy, modules, mounts, perm-mod, privileged, scope, session, system-locale, time-change). Also supports groups (ubuntu-cis-rules, docker-cis-rules) and keywords (none, all, !<rule> for exclusions). Since Container Cloud 2.28.0, presetRules supports collecting grouped CIS rules. Example: 'all,!immutable,!sessions' enables all rules except immutable and sessions."
+      "description": "String, default - 'all,!immutable'. Comma-separated list of built-in preset rules (access, actions, delete, docker, identity, immutable, logins, mac-policy, modules, mounts, perm-mod, privileged, scope, session, system-locale, time-change). Also supports groups (ubuntu-cis-rules, docker-cis-rules) and keywords (none, all, !<rule> for exclusions). Since Container Cloud 2.28.0, presetRules supports collecting grouped CIS rules. Example: 'all,!immutable,!sessions' enables all rules except immutable and sessions."
+    },
+    "auditdRulesOwner": {
+      "type": "string",
+      "description": "String, default - 'root'. Linux user for .rules files in /etc/audit/rules.d/ "
+    },
+    "auditdRulesGroup": {
+      "type": "string",
+      "description": "String, default - 'root'. Linux group for .rules files in /etc/audit/rules.d/ "
+    },
+    "auditdRulesMode": {
+      "type": "string",
+      "description": "String, default - '0600'. Linux file permissions for .rules files in /etc/audit/rules.d/ "
     }
   },
-  "required": ["enabled"]
+  "required": ["enabled"],
+  "additionalProperties": false
 }
