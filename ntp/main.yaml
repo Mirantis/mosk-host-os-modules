@@ -25,7 +25,7 @@
       when:
         - ansible_facts.services is contains('systemd-timesyncd.service')
 
-    - name: Disable ntp if it exists
+    - name: Disable ntp service if it exists
       service:
         name: ntp
         state: stopped
@@ -35,7 +35,7 @@
         - ansible_facts.services['ntp.service'].status is defined
         - ansible_facts.services['ntp.service'].status != 'not-found'
 
-    - name: Disable ntpd if it exists
+    - name: Disable ntpd service if it exists
       service:
         name: ntpd
         state: stopped
@@ -51,7 +51,7 @@
         dest: /etc/chrony/chrony.conf
         mode: '0644'
       notify:
-        - Restart ntp
+        - Restart NTP
 
     - name: Flush handlers
       meta: flush_handlers
@@ -65,7 +65,7 @@
       changed_when: false
 
   handlers:
-    - name: Restart ntp
+    - name: Restart NTP
       service:
         name: chrony
         state: restarted
