@@ -10,8 +10,6 @@
   notify: "restart auditd"
 
 - name: "Configure log file rotation"
-  when:
-    - auditd_max_log_file_action | string | length != 0
   block:
     - set_fact:
         max_log_file_action: "{{ auditd_max_log_file_action }}"

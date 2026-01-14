@@ -37,10 +37,11 @@ The module supports the following input parameters:
   Configures the maximum size of the audit log file. Once the log reaches this size, it is rotated and a new log is started.
   CIS 4.1.2.1.
 
-* **`maxLogFileAction`**: `string`, optional
+* **`maxLogFileAction`**: `string`, optional, default: `rotate`
   Allowed values: `rotate`, `keep_logs`, `compress`
 
   * Defines how to handle audit logs when the maximum file size is reached.
+  * `rotate`: Rotate logs, keep `maxLogFileKeep` files, delete oldest.
   * `keep_logs`: Rotate logs but never delete old ones.
   * `compress`: Same as `keep_logs`, plus a cron job compresses rotated log files, keeping up to **5 compressed files**.
   * CIS 4.1.2.2.

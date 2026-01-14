@@ -21,7 +21,7 @@
     auditd_preset_rules: "{{ values.presetRules | default('all,!immutable') }}"
     auditd_backlog_limit: "{{ values.backlogLimit | default('') }}"
     auditd_max_log_file: "{{ values.maxLogFile | default(8) }}"
-    auditd_max_log_file_action: "{{ values.maxLogFileAction | default('') }}"
+    auditd_max_log_file_action: "{{ values.maxLogFileAction | default('rotate') }}"
     auditd_max_log_file_keep: "{{ values.maxLogFileKeep | default(5) }}"
     auditd_custom_rules: "{{ values.customRules | default('') }}"
     auditd_preset_groups:
