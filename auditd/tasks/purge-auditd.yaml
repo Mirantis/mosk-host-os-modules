@@ -1,4 +1,8 @@
 ---
+- set_fact:
+    auditd_enabled_at_boot: false
+    auditd_backlog_limit: ''
+
 - include_tasks: tasks/disable-auditd.yaml
 
 - include_tasks: tasks/cleanup-rules.yaml
