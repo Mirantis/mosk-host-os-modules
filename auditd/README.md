@@ -4,7 +4,7 @@ The `auditd` module allows configuring the auditd rules at runtime on cluster ma
 
 > **Note:** This module is implemented for the Ubuntu 22.04 and 24.04 host OS.
 >
-> **Note:** This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu XX.04 in the Cluster release XXX: **Ansible Core XXX** and **Ansible Collection XXX**.
+> **Note:** This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 22.04 and Ubuntu 24.04 in the Cluster release 20.1.0: **Ansible Core 2.16.3** and **Ansible Collection 8.3.0**.
 >
 > To verify the Ansible version in a specific Cluster release, refer to the
 > **Release artifacts > Management cluster artifacts > System and MCR artifacts**
@@ -107,7 +107,7 @@ CIS 4.1.2.3.
 
 # Configuration examples
 
-Example `HostOSConfiguration` with the `auditd` module X.X.X:
+Example `HostOSConfiguration` with the `auditd` module 1.0.0:
 
 ```yaml
 apiVersion: kaas.mirantis.com/v1alpha1
@@ -118,13 +118,13 @@ metadata:
 spec:
   configs:
     - module: auditd
-      moduleVersion: X.X.X
+      moduleVersion: 1.0.0
       values:
         enabled: true
         enabledAtBoot: true
         maxLogFileAction: compress
         maxLogFileKeep: 5
-        mayHaltSystem: true
+        presetRules: "all,!delete,!immutable"
   machineSelector:
     matchLabels:
       day2-auditd-module: "true"
