@@ -4,6 +4,9 @@ metadata:
   name: dev-mcc-modules
 spec:
   modules:
+    - name: auditd
+      version: 1.0.1-dev
+      sha256sum: 92137964bba2f5b69de8bd94dc89483899ade9e598944ac3f9420224e0f63ade
     - name: cpushield
       version: 1.1.5-dev
       sha256sum: 28c5ce50f427b94cf1136e1db51001eef4b38e3ea75b3f4a145c704ce04fd6a8

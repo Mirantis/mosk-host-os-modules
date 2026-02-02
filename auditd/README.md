@@ -2,8 +2,8 @@
 
 The `auditd` module allows configuring the auditd rules at runtime on cluster machines using the mechanism implemented in the day-2 operations API.
 
-> **Note:** This module is implemented for the Ubuntu 22.04 and 24.04 host OS.
->
+> **Note:** This module supports Ubuntu 22.04 and 24.04 host OS.
+
 > **Note:** This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 22.04 and Ubuntu 24.04 in the Cluster release 20.1.0: **Ansible Core 2.16.3** and **Ansible Collection 8.3.0**.
 >
 > To verify the Ansible version in a specific Cluster release, refer to the
@@ -17,27 +17,27 @@ The `auditd` module allows configuring the auditd rules at runtime on cluster ma
 
 The module supports the following input parameters:
 
-* **`purge`**: `bool`, optional, default: `false`
+* **`purge`**: `bool`, optional, default: `false`.
   Removes the auditd package and other module traces. If set to `true`, no other parameters take effect.
 
-* **`enabled`**: `bool`, mandatory
+* **`enabled`**: `bool`, mandatory.
   Enables or disables auditd.
   CIS 4.1.1.1, CIS 4.1.1.2.
 
-* **`enabledAtBoot`**: `bool`, optional, default: `false`
-  Configures GRUB so that processes capable of being audited can be audited even if they start up before auditd.
+* **`enabledAtBoot`**: `bool`, optional, default: `false`.
+  Configures GRUB to audit eligible processes even if they start up before auditd.
   CIS 4.1.1.3.
 
-* **`backlogLimit`**: `int`, optional, default: `undefined`
-  During boot, if `audit=1`, then the backlog holds 64 records.
-  If more than 64 records are created during boot, auditd records may be lost and malicious activity could go undetected.
+* **`backlogLimit`**: `int`, optional, default: `undefined`.
+  If `audit=1` during boot, the backlog holds 64 records.
+  Generating more than 64 records during boot may result in lost auditd records, allowing malicious activity to bypass detection.
   CIS 4.1.1.4.
 
-* **`maxLogFile`**: `int`, optional, default: `8`
+* **`maxLogFile`**: `int`, optional, default: `8`.
   Configures the maximum size of the audit log file. Once the log reaches this size, it is rotated and a new log is started.
   CIS 4.1.2.1.
 
-* **`maxLogFileAction`**: `string`, optional, default: `rotate`
+* **`maxLogFileAction`**: `string`, optional, default: `rotate`.
   Allowed values: `rotate`, `keep_logs`, `compress`
 
   * Defines how to handle audit logs when the maximum file size is reached.
@@ -46,10 +46,10 @@ The module supports the following input parameters:
   * `compress`: Same as `keep_logs`, plus a cron job compresses rotated log files, keeping up to **5 compressed files**.
   * CIS 4.1.2.2.
 
-* **`maxLogFileKeep`**: `int`, optional, default: `5`
+* **`maxLogFileKeep`**: `int`, optional, default: `5`.
   Used when `maxLogFileAction: compress`. Defines the number of compressed log files to retain in `/var/log/auditd/`.
 
-* **`mayHaltSystem`**: `bool`, optional, default: `false`
+* **`mayHaltSystem`**: `bool`, optional, default: `false`.
   Configures auditd to halt the system when audit logs are full. Applies the following settings:
 
   ```
@@ -57,13 +57,12 @@ The module supports the following input parameters:
   action_mail_acct = root
   admin_space_left_action = halt
   ```
+  CIS 4.1.2.3.
 
-> WARNING: Expected behavior for `mayHaltSystem` is to LOCK host system when logs are full.
-> USE WITH CAUTION!
+> Warning. The `mayHaltSystem` parameter locks the host system when logs reach capacity. Use this setting with extreme caution, as it will stop all system operations.
 
-CIS 4.1.2.3.
 
-* **`presetRules`**: `string`, optional, default: `all,!immutable`
+* **`presetRules`**: `string`, optional, default: `all,!immutable`.
   A comma-separated list of preset rules:
   `docker`, `time-change`, `identity`, `system-locale`, `mac-policy`, `logins`,
   `session`, `perm-mod`, `access`, `privileged`, `mounts`, `delete`,
@@ -100,7 +99,7 @@ CIS 4.1.2.3.
   * CIS 1.2.10
   * CIS 1.2.11
 
-* **`customRules`**: `string`, optional, default: `undefined`
+* **`customRules`**: `string`, optional, default: `undefined`.
   Raw text content for a `60-custom.rules` file, applicable to any architecture.
 
 ---
