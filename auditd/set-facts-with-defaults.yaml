@@ -18,7 +18,7 @@
     auditd_journald_logging_enabled: "{{ valued.auditdJournaldLoggingEnabled | default(false) }}"
     auditd_augenrules_safe_path: "/usr/sbin/augenrules-safe"
     auditd_may_halt_system: "{{ values.mayHaltSystem | default(false) }}"
-    auditd_preset_rules: "{{ values.presetRules | default('all,!immutable') }}"
+    auditd_preset_rules: "{{ values.presetRules | default('all,!stig,!immutable') }}"
     auditd_backlog_limit: "{{ values.backlogLimit | default('') }}"
     auditd_max_log_file: "{{ values.maxLogFile | default(8) }}"
     auditd_max_log_file_action: "{{ values.maxLogFileAction | default('rotate') }}"
@@ -60,3 +60,4 @@
       - "mac-policy"
       - "modules"
       - "immutable"
+      - "stig"
