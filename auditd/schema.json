@@ -19,6 +19,18 @@
       "minimum": 1,
       "description": "Integer, default - none. Configures the backlog to hold records. If during boot audit=1 is configured, the backlog holds 64 records. If more than 64 records are created during boot, auditd records will be lost with a potential malicious activity being undetected. CIS rule: 4.1.1.4."
     },
+    "logGroup": {
+      "type": "string",
+      "description": "String, default - 'root'. log_group parameter for auditd.conf file."
+    },
+    "logFilePath": {
+      "type": "string",
+      "description": "String, default - '/var/log/audit/audit.log'. log_file parameter for auditd.conf file."
+    },
+    "logFilePerm": {
+      "type": "string",
+      "description": "String, default - '0600'. Linux permissions for logFilePath file."
+    },
     "maxLogFile": {
       "type": "integer",
       "minimum": 1,
