@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "description": "Boolean, default - false. Configure the host with several DISA-STIG compliance requirements."
+    }
+  },
+  "required": ["enabled"],
+  "additionalProperties": false
+}

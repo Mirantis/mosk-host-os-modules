@@ -1,0 +1,14 @@
+---
+- name: "Configure DISA STIG compliance settings"
+  hosts: all
+  become: true
+  tasks:
+    - name: "Confidure sshd"
+      include_tasks: tasks/sshd.yaml
+      when: values.enabled | default (False)
+
+  handlers:
+    - name: Restart sshd
+      ansible.builtin.service:
+        name: ssh
+        state: restarted
