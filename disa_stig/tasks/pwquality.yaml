@@ -1,0 +1,34 @@
+- name: "UBTU-24-400290 | Set password difference (difok=8)"
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '(?i)^#?\s*difok\s*='
+    line: "difok = 8"
+    state: present
+
+- name: "UBTU-24-400320 | Set minimum password length (minlen=15)"
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '(?i)^#?\s*minlen\s*='
+    line: "minlen = 15"
+    state: present
+
+- name: "UBTU-24-400330 | Require at least one special character (ocredit=-1)"
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '(?i)^#?\s*ocredit\s*='
+    line: "ocredit = -1"
+    state: present
+
+- name: "UBTU-24-300014 | Enable dictionary check (dictcheck=1)"
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '(?i)^#?\s*dictcheck\s*='
+    line: "dictcheck = 1"
+    state: present
+
+- name: "UBTU-24-300116 | Set pwquality enforcing mode (enforcing=1)"
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '(?i)^#?\s*enforcing\s*='
+    line: "enforcing = 1"
+    state: present

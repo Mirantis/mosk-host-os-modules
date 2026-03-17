@@ -1,0 +1,8 @@
+- name: Deploy SSH Daemon STIG config
+  ansible.builtin.template:
+    src: templates/rsyslogd/rsyslogd.stig.conf.j2
+    dest: /etc/rsyslog.d/99-stig.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart rsyslog

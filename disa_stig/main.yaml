@@ -3,12 +3,24 @@
   hosts: all
   become: true
   tasks:
-    - name: "Confidure sshd"
-      include_tasks: tasks/sshd.yaml
-      when: values.enabled | default (False)
+    - when: values.enabled | default (False)
+      block:
+      - name: "Confidure sshd"
+        include_tasks: tasks/sshd.yaml
+
+      - name: "Confidure rsyslog"
+        include_tasks: tasks/rsyslog.yaml
+
+      - name: "Configure password quality"
+        include_tasks: tasks/pwquality.yaml
 
   handlers:
     - name: Restart sshd
       ansible.builtin.service:
         name: ssh
+        state: restarted
+
+    - name: Restart rsyslog
+      ansible.builtin.service:
+        name: rsyslog
         state: restarted
