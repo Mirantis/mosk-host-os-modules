@@ -5,6 +5,9 @@
   tasks:
     - when: values.enabled | default (False)
       block:
+      - name: "Install required packages"
+        include_tasks: tasks/packages.yaml
+
       - name: "Confidure sshd"
         include_tasks: tasks/sshd.yaml
 

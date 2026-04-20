@@ -1,0 +1,10 @@
+- name: Install PKCS11 and security packages
+  vars:
+    security_packages:
+      - opensc-pkcs11
+      - libpam-pkcs11
+      - vlock
+  apt:
+    name: "{{ security_packages }}"
+    state: present
+    update_cache: yes
