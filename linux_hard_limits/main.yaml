@@ -10,6 +10,7 @@
         systemd_user_filename: "/etc/systemd/user.conf"
         pamd_session_filename: "/etc/pam.d/common-session"
         pamd_session_noninteractive_filename: "/etc/pam.d/common-session-noninteractive"
+        pamd_session_sshd_filename: "/etc/pam.d/sshd"
 
     - name: Cleanup old limit settings
       when: values.cleanup_before | default (False)
@@ -28,20 +29,15 @@
             state: absent
             path: "{{ sysctl_filename }}"
 
-        - name: Drop limit requirement from pam configs
-          block:
-            - community.general.pamd:
-                name: common-session
-                type: session
-                control: required
-                module_path: pam_limits.so
-                state: absent
-            - community.general.pamd:
-                name: common-session-noninteractive
-                type: session
-                control: required
-                module_path: pam_limits.so
-                state: absent
+        - name: Remove pam_limits.so from PAM files
+          ansible.builtin.lineinfile:
+            path: "{{ item }}"
+            regexp: '^session\s+required\s+pam_limits\.so'
+            state: absent
+          loop:
+            - "{{ pamd_session_filename }}"
+            - "{{ pamd_session_noninteractive_filename }}"
+            - "{{ pamd_session_sshd_filename }}"
 
         - name: Unset systemd config fields to default (non-defined)
           notify: Reload systemd configs
@@ -122,18 +118,23 @@
                 state: present
                 value: "{{ values.system.nofile }}"
 
-            - community.general.pamd:
-                name: common-session
-                type: session
-                control: required
-                module_path: pam_limits.so
-                state: updated
-            - community.general.pamd:
-                name: common-session-noninteractive
-                type: session
-                control: required
-                module_path: pam_limits.so
-                state: updated
+        - name: Ensure limits are enabled in PAM configs
+          when:
+            - values.system is defined
+            - >
+               values.system.nofile is defined or 
+               values.system.maxlogins is defined or 
+               values.system.maxsyslogins is defined or 
+               values.system.priority is defined
+          ansible.builtin.lineinfile:
+            path: "{{ item }}"
+            regexp: '^session\s+required\s+pam_limits\.so'
+            line: 'session required pam_limits.so'
+            state: present
+          loop:
+            - "{{ pamd_session_filename }}"
+            - "{{ pamd_session_noninteractive_filename }}"
+            - "{{ pamd_session_sshd_filename }}"
 
     # if defined root limits will override system-wide default limits here
     - name: Configure per users limits using /etc/limits.d/ config
