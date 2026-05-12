@@ -1,6 +1,10 @@
 # These servers were defined in the installation:
 {% for server in values.ntp_servers %}
+{% if values.stigHardening | default (False) %}
+server {{ server }} iburst maxpoll 16
+{% else %}
 server {{ server }} iburst
+{% endif %}
 {% endfor %}
 # Use public servers from the pool.ntp.org project.
 # Please consider joining the pool (http://www.pool.ntp.org/join.html).
@@ -8,9 +12,15 @@ server {{ server }} iburst
 # Record the rate at which the system clock gains/losses time.
 driftfile /var/lib/chrony/drift
 
+{% if values.stigHardening | default (False) %}
+# Allow the system clock to be stepped in without limiting updates count
+# if its offset is larger than 1 second.
+makestep 1 -1
+{% else %}
 # Allow the system clock to be stepped in the first three updates
 # if its offset is larger than 1 second.
 makestep 1.0 3
+{% endif %}
 
 # Enable kernel synchronization of the real-time clock (RTC).
 rtcsync

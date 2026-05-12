@@ -10,7 +10,16 @@ The NTP module allows the operator to manage NTP servers at runtime on cluster m
 > section of the required management Cluster release in
 > [MOSK documentation: Release notes](https://docs.mirantis.com/mosk/latest/release-notes.html).
 
-# Version 1.0.0 (latest)
+# Version 1.1.0 (latest)
+
+Add ability to fix DISA STIG tests
+
+- UBTU-24-600160 Ubuntu 24.04 LTS must compare internal information system clocks at least every 24 hours with an authoritative time server.
+- UBTU-24-600180 Ubuntu 24.04 LTS must synchronize internal information system clocks to the authoritative time source when the time difference is greater than one second.
+
+To enable the fixes set `values.stigHardening` to `True` (see example below).
+
+# Version 1.0.0
 
 Using the NTP module 1.0.0, you can configure list of NTP servers.
 The module contains the following input parameter:
@@ -19,7 +28,7 @@ The module contains the following input parameter:
 
 # Configuration examples
 
-Example of `HostOSConfiguration` with the NTP module 1.0.0 for configuration of NTP servers:
+Example of `HostOSConfiguration` with the NTP module 1.1.0 for configuration of NTP servers:
 
 ```
     apiVersion: kaas.mirantis.com/v1alpha1
@@ -30,13 +39,14 @@ Example of `HostOSConfiguration` with the NTP module 1.0.0 for configuration of 
     spec:
       configs:
       - module: ntp
-        moduleVersion: 1.0.0
+        moduleVersion: 1.1.0
         values:
           ntp_servers:
             - 0.ubuntu.pool.ntp.org
             - 1.ubuntu.pool.ntp.org
             - 2.ubuntu.pool.ntp.org
             - 3.ubuntu.pool.ntp.org
+          stigHardening: False
       machineSelector:
         matchLabels:
           day2-custom-label: "true"

@@ -8,6 +8,10 @@
       "items": {
         "type": "string"
       }
+    },
+    "stigHardening": {
+      "type": "boolean",
+      "description": "Enforce DISA STIG hardening rules UBTU-24-600160 and UBTU-24-600180"
     }
   },
   "required": ["ntp_servers"]
