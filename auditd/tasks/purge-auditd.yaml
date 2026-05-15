@@ -10,7 +10,6 @@
 - name: Remove auditd packages
   package:
     name: "{{ auditd_packages }}"
-    use: "{{ auditd_package_manager }}"
     state: absent
     purge: yes
   notify: "systemd daemon reload"

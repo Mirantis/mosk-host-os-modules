@@ -25,6 +25,7 @@
       - include_tasks: tasks/immutable-mode-check.yaml
       - include_tasks: tasks/retention.yaml
       - include_tasks: tasks/rules.yaml
+      - include_tasks: tasks/remote-offload.yaml
 
     - include_tasks: tasks/grub/main.yaml
 

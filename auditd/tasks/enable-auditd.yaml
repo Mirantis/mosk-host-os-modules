@@ -4,7 +4,6 @@
   package:
     name: "{{ auditd_packages }}"
     state: "present"
-    use: "{{ auditd_package_manager }}"
   retries: 3
   delay: 5
   register: package_install

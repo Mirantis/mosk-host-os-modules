@@ -1,0 +1,86 @@
+- name: Disable remote audit logging
+  when: not auditd_remote_upload_enabled
+  block:
+  - name: Disable audisp remote plugin
+    ansible.builtin.lineinfile:
+      path: /etc/audit/plugins.d/au-remote.conf
+      regexp: '^active\s*='
+      line: 'active = no'
+      create: false
+      backrefs: false
+    notify: restart auditd
+
+  - name: Reset remote audit server
+    ansible.builtin.lineinfile:
+      path: /etc/audit/audisp-remote.conf
+      regexp: '^remote_server\s*='
+      line: "remote_server = "
+    notify: restart auditd
+
+  - name: Reset remote audit port
+    ansible.builtin.lineinfile:
+      path: /etc/audit/audisp-remote.conf
+      regexp: '^port\s*='
+      line: "port = 60"
+    notify: restart auditd
+
+- name: Configure and enable remote audit logging
+  when: auditd_remote_upload_enabled
+  block:
+  - name: Enable audisp remote plugin
+    ansible.builtin.lineinfile:
+      path: /etc/audit/plugins.d/au-remote.conf
+      regexp: '^active\s*='
+      line: 'active = yes'
+      create: false
+      backrefs: false
+    notify: restart auditd
+
+  - name: Ensure audisp remote plugin direction
+    ansible.builtin.lineinfile:
+      path: /etc/audit/plugins.d/au-remote.conf
+      regexp: '^direction\s*='
+      line: 'direction = out'
+    notify: restart auditd
+
+  - name: Ensure audisp remote plugin path
+    ansible.builtin.lineinfile:
+      path: /etc/audit/plugins.d/au-remote.conf
+      regexp: '^path\s*='
+      line: 'path = /sbin/audisp-remote'
+    notify: restart auditd
+
+  - name: Configure remote audit server
+    ansible.builtin.lineinfile:
+      path: /etc/audit/audisp-remote.conf
+      regexp: '^remote_server\s*='
+      line: "remote_server = {{ auditd_remote_upload_server }}"
+    notify: restart auditd
+
+  - name: Configure remote audit port
+    ansible.builtin.lineinfile:
+      path: /etc/audit/audisp-remote.conf
+      regexp: '^port\s*='
+      line: "port = {{ auditd_remote_upload_port }}"
+    notify: restart auditd
+
+  - name: Configure remote audit transport
+    ansible.builtin.lineinfile:
+      path: /etc/audit/audisp-remote.conf
+      regexp: '^transport\s*='
+      line: 'transport = tcp'
+    notify: restart auditd
+
+  - name: Configure remote audit mode
+    ansible.builtin.lineinfile:
+      path: /etc/audit/audisp-remote.conf
+      regexp: '^mode\s*='
+      line: 'mode = immediate'
+    notify: restart auditd
+
+  - name: Configure queue file
+    ansible.builtin.lineinfile:
+      path: /etc/audit/audisp-remote.conf
+      regexp: '^queue_file\s*='
+      line: 'queue_file = /var/spool/audit/remote.log'
+    notify: restart auditd

@@ -1,6 +1,5 @@
 - name: "Set Debian-related facts"
   set_fact:
-    auditd_package_manager: "apt"
     auditd_packages:
       - auditd
       - audispd-plugins
@@ -27,6 +26,9 @@
     auditd_max_log_file_action: "{{ values.maxLogFileAction | default('rotate') }}"
     auditd_max_log_file_keep: "{{ values.maxLogFileKeep | default(5) }}"
     auditd_custom_rules: "{{ values.customRules | default('') }}"
+    auditd_remote_upload_enabled: "{{ values.remoteUpload.enabled | default(false) }}"
+    auditd_remote_upload_server: "{{ values.remoteUpload.server | default('') }}"
+    auditd_remote_upload_port: "{{ values.remoteUpload.port | default('') }}"
     auditd_preset_groups:
       docker-cis-rules:
         - "docker"

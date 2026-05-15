@@ -69,8 +69,29 @@
     "auditdRulesMode": {
       "type": "string",
       "description": "String, default - '0600'. Linux file permissions for .rules files in /etc/audit/rules.d/ "
+    },
+    "remoteUpload": {
+      "type": "object",
+      "description": "Configuration for remote audit log uploading.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enables remote uploading of audit logs."
+        },
+        "server": {
+          "type": "string",
+          "description": "The remote server address to receive audit logs."
+        },
+        "port": {
+          "type": "string",
+          "description": "The port number of the remote server."
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "required": ["enabled"],
+  "required": [
+    "enabled"
+  ],
   "additionalProperties": false
 }
