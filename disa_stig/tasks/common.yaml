@@ -1,0 +1,114 @@
+- name: "UBTU-24-200060 | profile.d TMOUT parameter"
+  ansible.builtin.lineinfile:
+    path: /etc/profile.d/99-terminal_tmout.sh
+    regexp: '(?i)^#?\s*export\s*TMOUT\s*='
+    line: "TMOUT=600"
+    state: present
+    create: yes
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: "UBTU-24-300017 | Enforce 4 second delay after failed logon attempts"
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/common-auth
+    regexp: '^auth\s+required\s+pam_faildelay\.so'
+    line: 'auth    required    pam_faildelay.so delay=4000000'
+    insertbefore: '^auth\s+.*pam_unix\.so'
+    state: present
+
+- name: "UBTU-24-300011 | Audit and fix system command permissions"
+  block:
+    - name: "Find non-compliant binaries"
+      ansible.builtin.shell: "find /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -perm /022 -type f"
+      register: non_compliant_files
+      changed_when: false
+      check_mode: no
+
+    - name: "Fix system command permissions to 0755"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0755'
+      loop: "{{ non_compliant_files.stdout_lines }}"
+      when: non_compliant_files.stdout_lines | length > 0
+
+- name: "UBTU-24-300026 | Disable x86 Ctrl-Alt-Delete key sequence"
+  ansible.builtin.systemd_service:
+    name: ctrl-alt-del.target
+    enabled: no
+    masked: yes
+    daemon_reload: yes
+
+- name: "UBTU-24-400220 | Secure pam_unix.so parameters in common-password"
+  community.general.pamd:
+    name: common-password
+    type: password
+    control: "[success=1 default=ignore]"
+    module_path: pam_unix.so
+    module_arguments:
+      - obscure
+      - use_authtok
+      - try_first_pass
+      - sha512
+      - shadow
+      - rounds=100000
+    state: updated
+
+- name: "UBTU-24-700010 | Secure log file permissions to 0640"
+  block:
+  - name: Find all log files in /var/log directory
+    ansible.builtin.find:
+      paths: /var/log
+      recurse: yes
+      file_type: file
+      patterns: "*"
+      excludes:
+        - "*btmp"
+        - "*wtmp"
+        - "lastlog"
+        - "history.log"
+        - "eipp.log.xz"
+    register: log_files_to_fix
+
+  - name: Set 640 permission to all log files in /var/log directory
+    ansible.builtin.file:
+      path: "{{ item.path }}"
+      mode: '0640'
+      state: file
+    loop: "{{ log_files_to_fix.files }}"
+    when: log_files_to_fix.matched > 0
+
+- name: "UBTU-24-700020 | Configure systemd journal permissions in tmpfiles.d"
+  block:
+    - name: "Configure tmpfiles.d entry for {{ item.path }}"
+      ansible.builtin.lineinfile:
+        path: /usr/lib/tmpfiles.d/systemd.conf
+        regexp: "^{{ item.type }}\\s+{{ item.path | regex_escape }}\\s+"
+        line: "{{ item.type }} {{ item.path }} {{ item.mode }} root systemd-journal - -"
+        state: present
+      loop:
+        - { type: 'z', path: '/run/log/journal', mode: '2640' }
+        - { type: 'Z', path: '/run/log/journal/%m', mode: '~2640' }
+        - { type: 'z', path: '/var/log/journal', mode: '2640' }
+        - { type: 'z', path: '/var/log/journal/%m', mode: '2640' }
+        - { type: 'z', path: '/var/log/journal/%m/system.journal', mode: '0640' }
+      loop_control:
+        label: "{{ item.path }}"
+      notify: request reboot
+
+    - name: "Ensure systemd-tmpfiles applies changes immediately"
+      ansible.builtin.command: systemd-tmpfiles --create --prefix /var/log/journal
+      changed_when: false
+
+- name: "UBTU-24-700030 | Restrict journalctl execution permissions"
+  ansible.builtin.file:
+    path: /usr/bin/journalctl
+    mode: '0740'
+    state: file
+
+- name: "UBTU-24-700100 | Set /var/log directory group to syslog"
+  ansible.builtin.file:
+    path: /var/log
+    owner: root
+    group: syslog
+    state: directory

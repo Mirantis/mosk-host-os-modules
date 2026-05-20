@@ -1,0 +1,39 @@
+- name: UBTU-24-300039 | Disable USB storage automount
+  when:
+    - values.disableUsbStorage is defined
+    - values.disableUsbStorage
+  block:
+    - name: Ensure DISASTIG.conf contains hardening entries
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/DISASTIG.conf
+        line: "{{ item }}"
+        create: yes
+        owner: root
+        group: root
+        mode: '0644'
+        state: present
+      loop:
+        - "install usb-storage /bin/false"
+        - "blacklist usb-storage"
+
+    - name: Force unload usb-storage module
+      community.general.modprobe:
+        name: usb-storage
+        state: absent
+      ignore_errors: yes
+
+- name: "Revert UBTU-24-300039: Enable USB storage automount"
+  when: values.disableUsbStorage | default (False) == False
+  block:
+    - name: Remove hardening entries from DISASTIG.conf
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/DISASTIG.conf
+        regexp: "{{ item }}"
+        state: absent
+      loop:
+        - '^install usb-storage.*'
+        - '^blacklist usb-storage'
+
+    - name: Force load usb-storage module
+      community.general.modprobe:
+        name: usb-storage

@@ -5,6 +5,10 @@
     "enabled": {
       "type": "boolean",
       "description": "Boolean, default - false. Configure the host with several DISA-STIG compliance requirements."
+    },
+    "disableUsbStorage": {
+      "type": "boolean",
+      "description": "Boolean, default - false."
     }
   },
   "required": ["enabled"],
