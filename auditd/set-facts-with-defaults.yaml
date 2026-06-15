@@ -29,6 +29,13 @@
     auditd_remote_upload_enabled: "{{ values.remoteUpload.enabled | default(false) }}"
     auditd_remote_upload_server: "{{ values.remoteUpload.server | default('') }}"
     auditd_remote_upload_port: "{{ values.remoteUpload.port | default('') }}"
+    auditd_weekly_offload_enabled: "{{ values.weeklyLogOffload.enabled | default(false) }}"
+    auditd_rsync_dest: "{{ values.weeklyLogOffload.rsyncDest | default('') }}"
+    auditd_rsync_remote_user: "{{ values.weeklyLogOffload.rsyncRemoteUser | default('') }}"
+    auditd_rsync_remote_host: "{{ values.weeklyLogOffload.rsyncRemoteHost | default('') }}"
+    auditd_rsync_additional_args: "{{ values.weeklyLogOffload.rsyncAdditionalArgs | default('') }}"
+    auditd_rsync_ssh_additional_args: "{{ values.weeklyLogOffload.rsyncSSHAdditionalArgs | default('') }}"
+    auditd_rsync_private_key: "{{ values.weeklyLogOffloadRsyncPrivateKey | default('') }}"
     auditd_preset_groups:
       docker-cis-rules:
         - "docker"

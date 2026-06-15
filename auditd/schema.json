@@ -2,6 +2,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
+    "weeklyLogOffloadRsyncPrivateKey": {
+      "type": "string",
+      "description": "String, default - ''. Private key from k8s Secret object."
+    },
     "purge": {
       "type": "boolean",
       "description": "Boolean, default - false. Removes auditd .deb package and all according files. Set true before HOC deletion."
@@ -87,6 +91,50 @@
           "description": "The port number of the remote server."
         }
       },
+      "additionalProperties": false
+    },
+    "weeklyLogOffload": {
+      "type": "object",
+      "description": "STIG Compliance: UBTU-24-900950 configuration for offloading audit logs to an external location weekly via rsync snapshots.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Boolean, default - false. Enables the crontab script execution to offload audit events weekly."
+        },
+        "rsyncDest": {
+          "type": "string",
+          "description": "String. Required if enabled. The destination directory target path on the local or remote system."
+        },
+        "rsyncRemoteUser": {
+          "type": "string",
+          "description": "String, optional. The SSH username used to authenticate against the remote log receiver target (e.g., 'ubuntu')."
+        },
+        "rsyncRemoteHost": {
+          "type": "string",
+          "description": "String, optional. The network address or hostname of the remote log receiver endpoint (e.g., '172.19.120.25')."
+        },
+        "rsyncAdditionalArgs": {
+          "type": "string",
+          "description": "String, default - ''. Allows passing arbitrary extra rsync arguments or engine flags directly to the backup line execution (e.g., --bwlimit=5000)."
+        },
+        "rsyncSSHAdditionalArgs": {
+          "type": "string",
+          "description": "String, default - ''. Allows passing arbitrary extra rsync arguments or engine flags directly to the backup line execution (e.g., --bwlimit=5000)."
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": { "enabled": { "const": true } }
+          },
+          "then": {
+            "required": ["rsyncDest"]
+          }
+        }
+      ],
       "additionalProperties": false
     }
   },

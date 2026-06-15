@@ -61,6 +61,22 @@ The module supports the following input parameters:
 
 > Warning. The `mayHaltSystem` parameter locks the host system when logs reach capacity. Use this setting with extreme caution, as it will stop all system operations.
 
+* **`weeklyLogOffload`**: `object`, optional, default: `undefined`.
+  Configuration map for offloading local system audit logs to an external or alternative log location on a weekly basis. Used to fulfill DISA STIG compliance tracking rules for standalone nodes.
+  **STIG UBTU-24-900950**.
+
+  * **`enabled`**: `bool`, mandatory if `weeklyLogOffload` block is defined.
+    Enables or disables the crontab script deployment inside `/etc/cron.weekly/` to offload local audit log tracks.
+  * **`rsyncDest`**: `string`, mandatory if `enabled` is `true`.
+    The destination directory target pathway. If remote `rsyncRemoteUser` and `rsyncRemoteHost` variables are configured, this represents the directory path located directly on the remote instance (e.g., `/home/storage/auditd_logs`). If remote variables are omitted, this is processed as a pure local system path wrapper (e.g., `/mnt/secure_backup`).
+  * **`rsyncRemoteUser`**: `string`, optional, default: `""`.
+    The SSH username token used to establish authorization scopes on the target log collection cluster node.
+  * **`rsyncRemoteHost`**: `string`, optional, default: `""`.
+    The remote receiver machine IP address or fully qualified network domain boundary.
+  * **`rsyncAdditionalArgs`**: `string`, optional, default: `""`.
+    Appends raw, explicit rsync string modifiers or runtime flags directly onto the automated execution query string (e.g., `--bwlimit=10m`).
+  * **`rsyncSSHAdditionalArgs`**: `string`, optional, default: `""`.
+    Appends raw configurations directly into the underlying SSH shell wrapper environment. Useful for specifying connection-specific arguments (e.g., `-p 22` or `-o ConnectTimeout=15`).
 
 * **`presetRules`**: `string`, optional, default: `all,!immutable`.
   A comma-separated list of preset rules:
@@ -102,7 +118,30 @@ The module supports the following input parameters:
 * **`customRules`**: `string`, optional, default: `undefined`.
   Raw text content for a `60-custom.rules` file, applicable to any architecture.
 
----
+# Weekly logs offloading configuration
+
+The weekly logs offloading sub-feature automates compliance with DISA STIG mandate **UBTU-24-900950** by establishing an automated cron engine that pushes local `auditd` historical blocks to an auxiliary target infrastructure.
+
+### Prerequisites
+
+* **Remote Endpoint Setup:** The remote target collection environment must have a functional OpenSSH daemon (`sshd`) operational and the `rsync` utility binary installed on its native `$PATH`.
+* **Key-Pair Authentication:** A cryptographic SSH key-pair must be generated. The corresponding public token must be successfully appended to the destination profile's `authorized_keys` template on the receiver machine.
+
+### Deployment Workflow
+
+1. **Generate the Kubernetes Secret Artifact:**
+   Construct a secure Kubernetes generic secret container enclosing your deployment private key. The data object key name **must** map to `weeklyLogOffloadRsyncPrivateKey`.
+
+   ```bash
+   kubectl create secret generic auditd-weekly-offload \
+     --namespace default \
+     --from-file=weeklyLogOffloadRsyncPrivateKey=/home/ubuntu/.ssh/auditd_weekly_offload
+   ```
+
+2. **Map the Secret in HostOSConfiguration:**
+   Reference the created secret under the `secretValues` section of your HostOSConfiguration. For more information regarding secret injection, refer to the [MOSK HostOSConfiguration Reference Guide](https://docs.mirantis.com/mosk/latest/ops/bm-operations/host-os-conf/hoc-description.html).
+3. **Configure HostOSConfiguration according to your requirements using `weeklyLogOffload` subsection of `values` section.**
+   See configuration example below.
 
 # Configuration examples
 
@@ -127,4 +166,33 @@ spec:
   machineSelector:
     matchLabels:
       day2-auditd-module: "true"
+```
+
+# Example of HostOSConfiguration for remote log offloading 
+
+```yaml
+apiVersion: kaas.mirantis.com/v1alpha1
+kind: HostOSConfiguration
+metadata:
+  name: auditd-weekly-offload
+  namespace: default
+spec:
+  configs:
+  - module: auditd
+    moduleVersion: X.X.X
+    secretValues:
+      name: auditd-weekly-offload
+      namespace: default
+    values:
+      enabled: true
+      weeklyLogOffload:
+        enabled: true
+        rsyncRemoteUser: "debian"
+        rsyncRemoteHost: "172.19.120.25"
+        rsyncDest: "/home/debian/auditd_logs"
+        rsyncAdditionalArgs: "--bwlimit=10m"
+        rsyncSSHAdditionalArgs: "-p 22 -o ConnectTimeout=15"
+  machineSelector:
+    matchLabels:
+      auditd-label: 'true'
 ```

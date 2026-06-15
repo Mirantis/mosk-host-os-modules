@@ -26,6 +26,7 @@
       - include_tasks: tasks/retention.yaml
       - include_tasks: tasks/rules.yaml
       - include_tasks: tasks/remote-offload.yaml
+      - include_tasks: tasks/weekly-rsync-offload.yaml
 
     - include_tasks: tasks/grub/main.yaml
 

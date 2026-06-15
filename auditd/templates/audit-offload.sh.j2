@@ -1,0 +1,41 @@
+#!/bin/bash
+# STIG Compliance: UBTU-24-900950 weekly snapshot audit log offload
+
+RSYNC_DEST="{{ auditd_rsync_dest }}"
+if [ -z "$RSYNC_DEST" ]; then
+    echo "Error: rsync destination path variable is empty." >&2
+    exit 1
+fi
+
+LOG_DIR="{{ auditd_log_dir_path }}"
+if [ ! -d "$LOG_DIR" ]; then
+    echo "Error: Audit log directory $LOG_DIR does not exist." >&2
+    exit 1
+fi
+
+RSYNC_USER="{{ auditd_rsync_remote_user }}"
+RSYNC_HOST="{{ auditd_rsync_remote_host }}"
+RSYNC_ADDITIONAL_ARGS="{{ auditd_rsync_additional_args }}"
+SSH_ADDITIONAL_ARGS="{{ auditd_rsync_ssh_additional_args }}"
+KEY_FILE="/root/.ssh/auditd_weekly_offload"
+
+TIMESTAMP=$(date +"%Y-%m-%d_%H%M%S")
+
+# Determine execution path based on the presence of remote network coordinates
+if [ -n "$RSYNC_USER" ] && [ -n "$RSYNC_HOST" ]; then
+    SOURCE_HOSTNAME=$(hostname -s)
+    FINAL_TARGET="${RSYNC_USER}@${RSYNC_HOST}:${RSYNC_DEST}/${SOURCE_HOSTNAME}/${TIMESTAMP}"
+
+    SSH_CMD="ssh -o StrictHostKeyChecking=accept-new $SSH_ADDITIONAL_ARGS"
+    if [ -f "$KEY_FILE" ]; then
+        SSH_CMD="$SSH_CMD -i $KEY_FILE"
+    fi
+    export RSYNC_RSH="$SSH_CMD"
+else
+    FINAL_TARGET="${RSYNC_DEST}/${TIMESTAMP}"
+fi
+
+echo "Starting snapshot backup to: ${FINAL_TARGET}"
+
+RSYNC_OPTS="-avz --mkpath --no-implied-dirs"
+rsync $RSYNC_OPTS $RSYNC_ADDITIONAL_ARGS "$LOG_DIR/" "$FINAL_TARGET"
