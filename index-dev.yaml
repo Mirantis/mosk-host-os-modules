@@ -11,8 +11,8 @@ spec:
       version: 1.1.5-dev
       sha256sum: 28c5ce50f427b94cf1136e1db51001eef4b38e3ea75b3f4a145c704ce04fd6a8
     - name: disa_stig
-      version: 0.0.42-dev
-      sha256sum: 56f007f263b2d8b1653a2ae0ffc48a59704aa1cdad39292b22e6ea0ae3a05b0a
+      version: 0.0.44-dev
+      sha256sum: 60b73828ab05371ea0d139770cf507ea68103f54a56bf30376222ac559f17aa8
     - name: grub_settings
       version: 1.1.1-dev
       sha256sum: d479cd1f8f06bb5a4cd7f3f08c7bf26b6ae428ea1ef9621b7878bc058cde5f81
