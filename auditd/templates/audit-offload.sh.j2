@@ -1,5 +1,5 @@
 #!/bin/bash
-# STIG Compliance: UBTU-24-900950 weekly snapshot audit log offload
+# STIG Compliance: UBTU-24-900950 weekly snapshot audit log upload
 
 RSYNC_DEST="{{ auditd_rsync_dest }}"
 if [ -z "$RSYNC_DEST" ]; then
@@ -17,7 +17,7 @@ RSYNC_USER="{{ auditd_rsync_remote_user }}"
 RSYNC_HOST="{{ auditd_rsync_remote_host }}"
 RSYNC_ADDITIONAL_ARGS="{{ auditd_rsync_additional_args }}"
 SSH_ADDITIONAL_ARGS="{{ auditd_rsync_ssh_additional_args }}"
-KEY_FILE="/root/.ssh/auditd_weekly_offload"
+KEY_FILE="/root/.ssh/auditd_weekly_upload"
 
 TIMESTAMP=$(date +"%Y-%m-%d_%H%M%S")
 

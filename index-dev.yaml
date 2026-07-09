@@ -5,8 +5,8 @@ metadata:
 spec:
   modules:
     - name: auditd
-      version: 1.0.27-dev
-      sha256sum: 35a6a2e66d535e79b1c4f768f23a5778946df81ca9d6c50dcd8fdc827bb10d02
+      version: 1.0.32-dev
+      sha256sum: 17cb1c05bd7d43cd62374fc8e5fdf6e133c5302baa257b43f05ade7eb10c1f56
     - name: cpushield
       version: 1.1.5-dev
       sha256sum: 28c5ce50f427b94cf1136e1db51001eef4b38e3ea75b3f4a145c704ce04fd6a8

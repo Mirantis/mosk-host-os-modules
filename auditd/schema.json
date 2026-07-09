@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "weeklyLogOffloadRsyncPrivateKey": {
+    "weeklyLogUploadRsyncPrivateKey": {
       "type": "string",
       "description": "String, default - ''. Private key from k8s Secret object."
     },
@@ -74,13 +74,13 @@
       "type": "string",
       "description": "String, default - '0600'. Linux file permissions for .rules files in /etc/audit/rules.d/ "
     },
-    "remoteUpload": {
+    "runtimeLogUpload": {
       "type": "object",
-      "description": "Configuration for remote audit log uploading.",
+      "description": "Configuration for runtime audit log uploading.",
       "properties": {
         "enabled": {
           "type": "boolean",
-          "description": "Enables remote uploading of audit logs."
+          "description": "Enables runtime uploading of audit logs."
         },
         "server": {
           "type": "string",
@@ -91,15 +91,28 @@
           "description": "The port number of the remote server."
         }
       },
+      "required": [
+        "enabled"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": { "enabled": { "const": true } }
+          },
+          "then": {
+            "required": ["server"]
+          }
+        }
+      ],
       "additionalProperties": false
     },
-    "weeklyLogOffload": {
+    "weeklyLogUpload": {
       "type": "object",
       "description": "STIG Compliance: UBTU-24-900950 configuration for offloading audit logs to an external location weekly via rsync snapshots.",
       "properties": {
         "enabled": {
           "type": "boolean",
-          "description": "Boolean, default - false. Enables the crontab script execution to offload audit events weekly."
+          "description": "Boolean, default - false. Enables the crontab script execution to upload audit events weekly."
         },
         "rsyncDest": {
           "type": "string",

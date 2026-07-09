@@ -1,5 +1,5 @@
 - name: Disable remote audit logging
-  when: not auditd_remote_upload_enabled
+  when: not auditd_runtime_upload_enabled
   block:
   - name: Disable audisp remote plugin
     ansible.builtin.lineinfile:
@@ -25,7 +25,7 @@
     notify: restart auditd
 
 - name: Configure and enable remote audit logging
-  when: auditd_remote_upload_enabled
+  when: auditd_runtime_upload_enabled
   block:
   - name: Enable audisp remote plugin
     ansible.builtin.lineinfile:
@@ -54,14 +54,14 @@
     ansible.builtin.lineinfile:
       path: /etc/audit/audisp-remote.conf
       regexp: '^remote_server\s*='
-      line: "remote_server = {{ auditd_remote_upload_server }}"
+      line: "remote_server = {{ auditd_runtime_upload_server }}"
     notify: restart auditd
 
   - name: Configure remote audit port
     ansible.builtin.lineinfile:
       path: /etc/audit/audisp-remote.conf
       regexp: '^port\s*='
-      line: "port = {{ auditd_remote_upload_port }}"
+      line: "port = {{ auditd_runtime_upload_port }}"
     notify: restart auditd
 
   - name: Configure remote audit transport

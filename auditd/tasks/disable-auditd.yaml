@@ -17,7 +17,7 @@
     path: "/etc/cron.daily/auditd.cron"
     state: absent
 
-- name: "Disable weekly offload cron task"
+- name: "Disable weekly upload cron task"
   file:
-    path: "/etc/cron.weekly/audit-offload.cron"
+    path: "/etc/cron.weekly/audit-upload.cron"
     state: absent

@@ -1,16 +1,16 @@
 ---
-- name: "Disable weekly offload cron task"
+- name: "Disable weekly upload cron task"
   ansible.builtin.file:
-    path: "/etc/cron.weekly/audit-offload.cron"
+    path: "/etc/cron.weekly/audit-upload.cron"
     state: absent
   when: >
-    (auditd_weekly_offload_enabled is not defined) or 
-    (auditd_weekly_offload_enabled | default(false) == false)
+    (auditd_weekly_upload_enabled is not defined) or 
+    (auditd_weekly_upload_enabled | default(false) == false)
 
-- name: "Create weekly offload cron task"
+- name: "Create weekly upload cron task"
   when:
-    - auditd_weekly_offload_enabled is defined
-    - auditd_weekly_offload_enabled | default(false) | bool
+    - auditd_weekly_upload_enabled is defined
+    - auditd_weekly_upload_enabled | default(false) | bool
   block:
     - name: UBTU-24-900950 | Ensure rsync is installed
       ansible.builtin.package:
@@ -26,9 +26,9 @@
         mode: '0700'
       when: auditd_rsync_private_key is defined and auditd_rsync_private_key | length > 0
 
-    - name: UBTU-24-900950 | Deploy private SSH key for offloading
+    - name: UBTU-24-900950 | Deploy private SSH key for uploading
       ansible.builtin.copy:
-        dest: /root/.ssh/auditd_weekly_offload
+        dest: /root/.ssh/auditd_weekly_upload
         content: "{{ auditd_rsync_private_key }}"
         owner: root
         group: root
@@ -37,8 +37,8 @@
 
     - name: UBTU-24-900950 | Deploy weekly snapshot-style cron script from template
       ansible.builtin.template:
-        src: audit-offload.sh.j2
-        dest: /etc/cron.weekly/audit-offload.cron
+        src: audit-upload.sh.j2
+        dest: /etc/cron.weekly/audit-upload.cron
         owner: root
         group: root
         mode: '0750'
