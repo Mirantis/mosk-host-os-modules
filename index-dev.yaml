@@ -11,8 +11,8 @@ spec:
       version: 1.1.5-dev
       sha256sum: 28c5ce50f427b94cf1136e1db51001eef4b38e3ea75b3f4a145c704ce04fd6a8
     - name: disa_stig
-      version: 0.0.45-dev
-      sha256sum: 060303cb4d3b2f2d0c9e190e205049de231c03e1f40960397e92d397338dcf31
+      version: 0.0.48-dev
+      sha256sum: b2d5fb6b1035fc18a206c2a81293d996add7f9b445417d98a06039119e180732
     - name: grub_settings
       version: 1.1.1-dev
       sha256sum: d479cd1f8f06bb5a4cd7f3f08c7bf26b6ae428ea1ef9621b7878bc058cde5f81
@@ -23,8 +23,8 @@ spec:
       version: 0.0.8-dev
       sha256sum: 15bf5ebe8470e5ab7a3476fa16b69365a3753be69edb0b358470b5cc4f766666
     - name: ntp
-      version: 1.0.6-dev
-      sha256sum: d1d6723421b599e067e5bb67b5d9e69749780d594fbe0acf38847ee49aa672fb
+      version: 1.0.8-dev
+      sha256sum: b3abbbf5d23cb2e4ae1f1d58afc94011124651adcfd502383e5a276dd7572879
     - name: package
       version: 1.4.1-dev
       sha256sum: c1d74728680b411655b2ff797883c26911634f095a1d3858ff778617e0a4272e

@@ -1,8 +1,8 @@
 # disa_stig module
 
-The `disa_stig` module allows configuring the auditd rules at runtime on cluster machines using the mechanism implemented in the day-2 operations API.
+The `disa_stig` module supports configuring the host operating system at runtime to comply with the DISA STIG `Canonical Ubuntu 24.04 LTS STIG, V1R5` on cluster machines using the mechanism implemented in the day-2 operations API.
 
-> **Note:** This module supports Ubuntu 24.04 host OS.
+> **Note:** This module supports Ubuntu 24.04 host OS only.
 
 > **Note:** This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 24.04 in the Cluster release XX.X.X: **Ansible Core X.XX.X** and **Ansible Collection X.X.X**.
 >
@@ -15,23 +15,18 @@ The `disa_stig` module allows configuring the auditd rules at runtime on cluster
 
 # Version 1.0.0 (latest)
 
+> **WARNING:** Changes made by the module cannot be reverted, except for the external USB storage setting.
+
+> **Note:** `lcm-ansible` can overwrite some changes made by the module. After each LCM operation, reapply the HostOSConfiguration object. For details, see [MOSK documentation: Retrigger a module configuration](https://docs.mirantis.com/mosk/latest/ops/bm-operations/host-os-conf/day2-crd-hoc-retrigger.html).
+
 The module supports the following input parameters:
 
 * **`enabled`**: `bool`, mandatory.
-  Enables the module to do the changes.
-
-List of supported compliance rules:
-
-* UBTU-24-100850: SSH client must use FIPS 140-3 approved ciphers
-* UBTU-24-100860: SSH client must use FIPS 140-3 validated MACs
-* UBTU-24-100820: FIPS-140-3 ciphers
-* UBTU-24-200640: Display the Standard Mandatory DOD Notice and Consent Banner
-* UBTU-24-300023: Prevent remote hosts from connecting to the proxy display
-* UBTU-24-400030: Implement smart card logins for MFA
-* UBTU-24-600000: Terminate traffic after a period of inactivity
-* UBTU-24-600010: Terminate after 10 minutes (600 seconds) of inactivity
-
-> **Note:** SSH/SSHD rules are configured via separate /etc/ssh/ssh(/d)_config.d/01-stig.conf file. This could lead to false-negative results for corresponding benchmark's tests.
+  Enables the module.
+* **`disableUsbStorage`**: `bool`, optional, default is `undefined`.
+  Disables any external USB storage according to `DISA STIG UBTU-24-300039`.
+  * Set to `true` to comply with the DISA STIG requirement.
+  * Set to `false` to revert the settings (for example, if an external USB storage is required for host maintenance).
 
 ---
 
@@ -51,7 +46,8 @@ spec:
       moduleVersion: 1.0.0
       values:
         enabled: true
+        disableUsbStorage: true
   machineSelector:
     matchLabels:
-      day2-disa-stig-module: "true"
+      disa-stig-module: "true"
 ```
