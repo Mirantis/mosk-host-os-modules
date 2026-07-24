@@ -5,8 +5,8 @@ metadata:
 spec:
   modules:
     - name: auditd
-      version: 1.0.34-dev
-      sha256sum: 5489cf37b497cd4e380f7fa29bea9e1fed8823ce57b08159e3d66fe5a78f58b0
+      version: 1.0.42-dev
+      sha256sum: 0a27289c3cff8634141c065451d0dd91bdd7a289d4b378c3cc1416fe4e78def0
     - name: cpushield
       version: 1.1.5-dev
       sha256sum: 28c5ce50f427b94cf1136e1db51001eef4b38e3ea75b3f4a145c704ce04fd6a8
@@ -23,8 +23,8 @@ spec:
       version: 0.0.8-dev
       sha256sum: 15bf5ebe8470e5ab7a3476fa16b69365a3753be69edb0b358470b5cc4f766666
     - name: ntp
-      version: 1.0.6-dev
-      sha256sum: d1d6723421b599e067e5bb67b5d9e69749780d594fbe0acf38847ee49aa672fb
+      version: 1.0.8-dev
+      sha256sum: b3abbbf5d23cb2e4ae1f1d58afc94011124651adcfd502383e5a276dd7572879
     - name: package
       version: 1.4.1-dev
       sha256sum: c1d74728680b411655b2ff797883c26911634f095a1d3858ff778617e0a4272e

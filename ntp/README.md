@@ -12,12 +12,15 @@ The NTP module allows the operator to manage NTP servers at runtime on cluster m
 
 # Version 1.1.0 (latest)
 
-Add ability to fix DISA STIG tests
+The `ntp` module 1.1.0 allow to comply with the following DISA STIG requirements:
 
-- UBTU-24-600160 Ubuntu 24.04 LTS must compare internal information system clocks at least every 24 hours with an authoritative time server.
-- UBTU-24-600180 Ubuntu 24.04 LTS must synchronize internal information system clocks to the authoritative time source when the time difference is greater than one second.
+* UBTU-24-600160: Ubuntu 24.04 LTS must compare internal information system clocks at least every 24 hours with an authoritative time server.
+* UBTU-24-600180: Ubuntu 24.04 LTS must synchronize internal information system clocks to the authoritative time source when the time difference is greater than one second.
 
-To enable the fixes set `values.stigHardening` to `True` (see example below).
+This settings is disabled by default. To enable it:
+
+* Ensure that you are using an official, trusted time source approved by the Department of Defense (DoD) or the U.S. Federal Government as the `ntp_servers` parameter.
+* Set `values.stigHardening` to `True` (see the example below).
 
 # Version 1.0.0
 
