@@ -1,19 +1,21 @@
 # linux_hard_limit module
 
+> **Note:** This README describes the latest version of the module. For version history and release notes, see the [changelog](changelog.md). Earlier versions are deprecated and not recommended for production environments.
+
 The `linux_hard_limit` module allows the operator to manage system hard limits at runtime on cluster machines using the mechanism implemented in the day-2 operations API.
 
 > Note: This module is implemented only for the Ubuntu 22.04 host OS.
 
-> Note: This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 22.04 in the Cluster release 17.3.0: Ansible Core 2.12.10 and Ansible Collection 5.10.0.
+> Note: This module was initially implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 22.04 in the Cluster release 17.3.0: Ansible Core 2.12.10 and Ansible Collection 5.10.0.
 >
 > To verify the Ansible version in a specific Cluster release, refer to the
 > **Release artifacts > Management cluster artifacts > System and MCR artifacts**
 > section of the required management Cluster release in
 > [MOSK documentation: Release notes](https://docs.mirantis.com/mosk/latest/release-notes.html).
 
-# Version 1.0.0 (latest)
+## Configuration parameters
 
-Using the `linux_hard_limit` module 1.0.0, you can configure the hard limits of the Linux kernel using several mechanisms:
+Using the `linux_hard_limit` module, you can configure the hard limits of the Linux kernel using several mechanisms:
 - `ulimit` rules, which will be stored in the `/etc/security/limits.d/98-day2-limits.conf` configuration file.
 - `nproc` limit will also update the sysctl parameter `kernel.pid_max` using the `/etc/sysctl.d/98-day2-fs.file-max.conf` configuration file.
 - `nofile` limit is more complicated to configure under the hood:
@@ -47,9 +49,9 @@ It is advised to set `cleanup_before` to true to avoid misconfiguration of the t
 > `nproc`: `1048576`
 > `nofile`: `524288`
 
-# Configuration examples
+## Configuration examples
 
-Example of `HostOSConfiguration` with the `linux_hard_limit` module 1.0.0 for configuring limits for maximum open files and maximum processes:
+Example of `HostOSConfiguration` with the `linux_hard_limit` module for configuring limits for maximum open files and maximum processes:
 
 ```yaml
 apiVersion: kaas.mirantis.com/v1alpha1
@@ -78,7 +80,7 @@ spec:
       day2-linux-module: 'true'
 ```
 
-Example of `HostOSConfiguration` with the `linux_hard_limits` module 1.0.0 for dropping previously configured kernel parameters:
+Example of `HostOSConfiguration` with the `linux_hard_limits` module for dropping previously configured kernel parameters:
 
 ```yaml
 apiVersion: kaas.mirantis.com/v1alpha1
@@ -96,5 +98,3 @@ spec:
     matchLabels:
       day2-linux-module: 'true'
 ```
-
----

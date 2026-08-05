@@ -1,5 +1,7 @@
 # cpushield module
 
+> **Note:** This README describes the latest version of the module. For version history and release notes, see the [changelog](changelog.md). Earlier versions are deprecated and not recommended for production environments.
+
 > Warning: Ubuntu 22.04 and 24.04 are supported with cgroup v2 and systemd. For example, this
 > configuration supports Unified Control Group hierarchy mode, which is not supported by cgroup v1.
 
@@ -21,7 +23,7 @@ other cores exclusively, for example, for pinning vCPUs of virtual machines (usi
 > either edit an existing HOC object, or remove the old one and create a new one from scratch
 > to avoid confusion by multiple cpushield-containing objects.
 
-## Supported cpushield parameters
+## Supported parameters
 
 > Note: The cpushield module creates a special file for LCM agent to request a subsequent reboot.
 > This file has the text format and contains a line with the reboot reason. LCM agent reports
@@ -53,7 +55,7 @@ other cores exclusively, for example, for pinning vCPUs of virtual machines (usi
 > - [Manual configuration for older Ubuntu versions - cgroup v1](https://docs.mirantis.com/mosk/latest/deploy/deploy-openstack/advanced-config/advanced-compute/configure-cpu-isolation.html?highlight=cpu%20isolation)
 > - [Shielding Linux Resources Book](https://documentation.suse.com/sle-rt/15-SP5/pdf/book-shielding_en.pdf)
 
-## Examples
+## Configuration examples
 
 To pin system processes onto CPU cores 0, 1, 2, and 5 for Ubuntu 22.04 or 24.04 in the cgroup v2 use case:
 

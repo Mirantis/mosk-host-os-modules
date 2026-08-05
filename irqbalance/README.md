@@ -1,9 +1,11 @@
 # irqbalance module
 
+> **Note:** This README describes the latest version of the module. For version history and release notes, see the [changelog](changelog.md). Earlier versions are deprecated and not recommended for production environments.
+
 The irqbalance module is designed to allow the cloud operator to install and configure the `irqbalance` service
 on cluster machines using the day-2 operations API.
 
-> Note: This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 20.04, 22.04, 24.04:
+> Note: This module was initially implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 20.04, 22.04, 24.04:
 > Ansible core 2.12.10 and Ansible collection 5.10.0.
 >
 > To verify the Ansible version in a specific Cluster release, refer to the
@@ -11,7 +13,7 @@ on cluster machines using the day-2 operations API.
 > section of the required management Cluster release in
 > [MOSK documentation: Release notes](https://docs.mirantis.com/mosk/latest/release-notes.html).
 
-# Default irqbalance configuration
+## Default irqbalance configuration
 
 The default configuration file `/etc/default/irqbalance` can contain the following settings, as defined in the
 [irqbalance documentation](https://github.com/Irqbalance/irqbalance/blob/master/misc/irqbalance.env):
@@ -63,7 +65,7 @@ The default configuration file `/etc/default/irqbalance` can contain the followi
 #IRQBALANCE_ARGS=
 ```
 
-# Setting empty values for the irqbalance parameters
+## Setting empty values for the irqbalance parameters
 
 When the cloud operator defines values for the irqbalance module in the `HOC` object, those values overwrite particular parameters
 in the `/etc/default/irqbalance` file. If the operator does not define a value, the corresponding parameter in the `/etc/default/irqbalance`
@@ -75,18 +77,9 @@ Otherwise, the `IRQBALANCE_ARGS` value remains the same in the configuration fil
 If you need to provide an empty `IRQBALANCE_ARGS` value, you can define `values.args: ""` (empty string) in the `HOC` object.
 Other parameters defined in `/etc/default/irqbalance` follow the same logic.
 
-# Version 1.1.0 (latest)
+## Configuration parameters
 
 The module allows installing, configuring, and enabling or disabling the `irqbalance` service on cluster machines.
-
-Since v1.0.0, the following changes apply to the irqbalance module:
-
-* Added the `oneshot` parameter.
-* Changed the method of setting empty values for the irqbalance parameters for better usability:
-
-  * When a parameter is not defined in `values` of the `HOC` object, the corresponding value remains the same in the irqbalance configuration file.
-  * When a parameter is set to `""` (empty string) in `values` of the `HOC` object , the corresponding value in the `irqbalance` configuration file
-    is also set to `""` (empty string).
 
 The module accepts the following parameters, all of them are optional:
 
@@ -117,36 +110,9 @@ The module accepts the following parameters, all of them are optional:
 > Note: If you enable the service without setting `banned_cpulist`, `banned_cpus`, `oneshot`, or `args`, the corresponding values
 > in `/etc/default/irqbalance` will remain as they were before applying the current `HOC` configuration.
 
-# Version 1.0.0 (deprecated)
+## Configuration examples
 
-> Note: The module version 1.0.0 is obsolete and not recommended for usage in production environments.
-
-The module allows installing, configuring, and enabling or disabling the `irqbalance` service on cluster machines.
-The module accepts the following parameters, all of them are optional:
-
-- `enabled`: Enable the `irqbalance` service. Defaults to `true`.
-- `banned_cpulist`: The `IRQBALANCE_BANNED_CPULIST` value. Leave empty to not update the current `IRQBALANCE_BANNED_CPULIST` value
-  in the `irqbalance` configuration file. Mutually exclusive with `banned_cpus`.
-- `banned_cpus`: The `IRQBALANCE_BANNED_CPUS` value. Leave empty to not update the current `IRQBALANCE_BANNED_CPUS` value
-  in the `irqbalance` configuration file. `IRQBALANCE_BANNED_CPUS` is deprecated in irqbalance v1.8.0. Mutually exclusive with `banned_cpulist`.
-- `args`: The `IRQBALANCE_ARGS` value. Leave empty to not update the current `IRQBALANCE_ARGS` value in the `irqbalance` configuration file.
-- `policy_script`: The irqbalance policy script, which is bash-compatible.
-- `policy_script_filepath`: The full file path name to store the irqbalance policy script that can be used with the `--policyscript=<filepath>` argument.
-  Leave empty to not write the policy script.
-- `update_apt_cache`: Enables the update of `apt-cache` before installing the `irqbalance` service. Defaults to `true`.
-
-> Caution: When you configure the policy script, at least three parameters must be set: `args`, `policy_script`, and `policy_script_filepath`.
-> Otherwise, the corresponding error message will be displayed in the status of the `HostOSConfiguration` object.
-
-> Note: If an error message in the status of the `HostOSConfiguration` object contains `schema validation failed`,
-> verify whether the types of used parameters are correct and whether the used combination of parameters is allowed.
-
-> Note: If you enable the service without setting `banned_cpulist`, `banned_cpus`, `oneshot`, or `args`, the corresponding values
-> in `/etc/default/irqbalance` will remain as they were before applying the current `HostOSConfiguration` configuration.
-
-# Configuration examples
-
-## Example 1. Run irqbalance using defaults.
+### Example 1. Run irqbalance using defaults.
 
 ```
     spec:
@@ -163,7 +129,7 @@ The module accepts the following parameters, all of them are optional:
 
 As a result of this configuration, no parameters will be set or overridden in the `irqbalance` configuration file.
 
-## Example 2. Run irqbalance and deny using certain CPU cores for IRQ balancing.
+### Example 2. Run irqbalance and deny using certain CPU cores for IRQ balancing.
 
 ```
     spec:
@@ -186,7 +152,7 @@ As a result of this configuration:
 - `IRQBALANCE_BANNED_CPUS` will be removed from the `irqbalance` configuration file
 - `IRQBALANCE_ONESHOT` will be set to `True`.
 
-## Example 3. Run irqbalance using policy script.
+### Example 3. Run irqbalance using policy script.
 
 ```
     spec:
@@ -217,7 +183,7 @@ As a result of this configuration:
 Refer to https://manpages.ubuntu.com/manpages/jammy/man1/irqbalance.1.html for the policy script description.
 In particular, refer to the `numa_node` variable used in the example.
 
-# Troubleshooting on the target host
+## Troubleshooting on the target host
 
 Use the following troubleshooting commands for irqbalance on a host:
 
@@ -247,7 +213,7 @@ Verify connections of NICs to NUMA nodes:
 
 > Note: `numa_node` exists for a given NIC only if NUMA is configured on the host.
 
-# irqbalance documentation
+## irqbalance documentation
 
 For information on the `irqbalance` service, refer to the official
 [irqbalance documentation for Ubuntu 22.04](https://manpages.ubuntu.com/manpages/jammy/man1/irqbalance.1.html) and the

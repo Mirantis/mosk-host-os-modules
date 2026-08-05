@@ -1,5 +1,7 @@
 # grub_settings module
 
+> **Note:** This README describes the latest version of the module. For version history and release notes, see the [changelog](changelog.md). Earlier versions are deprecated and not recommended for production environments.
+
 The grub_settings module allows configuring most of GRUB2 variables, which are specified
 in the `/etc/default/grub` configuration file by default.
 
@@ -43,8 +45,6 @@ is allowed to override `GRUB_CMDLINE_LINUX` with an empty value.
 - `grub_gfxmode` (string) - defines `GRUB_GFXMODE`. Only values in the
 `1280x1024x16,800x600x24,640x480` format are allowed. For example, a screen resolution must be
 divided by `,`.
-
-Following parameters are available since 1.1.0 version:
 - `grub_disable_recovery` (boolean) - defines `GRUB_DISABLE_RECOVERY`.
 - `grub_preload_modules` (array of strings) - defines `GRUB_PRELOAD_MODULES`.
 
@@ -63,7 +63,7 @@ all GRUB2 parameters specified above.
 - `disable_reboot_request` (boolean) - creation of a special file for LCM agent to request
 a subsequent reboot. If `true`, module does not create such a file and reboot does not occur. Default: `false`.
 
-## Examples
+## Configuration examples
 
 Change some GRUB2 options without reboot:
 

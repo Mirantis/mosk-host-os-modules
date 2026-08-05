@@ -84,3 +84,5 @@ All modules and `index.yaml` are built per-commit by Jenkins using pipeline, tha
 Use `make promote` to promote latest modules version in the repository, so new non-development versions are set for every module and all dev versions are removed from `index.yaml`.
 
 In time for release, move `artifact-metadata` items to `release` branch to release them onto <https://binary.mirantis.com/?prefix=bm/bin/host-os-modules/>.
+
+For module version history and release notes, see changelog.md in the required module directory.

@@ -1,19 +1,19 @@
 # disa_stig module
 
+> **Note:** This README describes the latest version of the module. For version history and release notes, see the [changelog](changelog.md). Earlier versions are deprecated and not recommended for production environments.
+
 The `disa_stig` module supports configuring the host operating system at runtime to comply with the DISA STIG `Canonical Ubuntu 24.04 LTS STIG, V1R5` on cluster machines using the mechanism implemented in the day-2 operations API.
 
 > **Note:** This module supports Ubuntu 24.04 host OS only.
 
-> **Note:** This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 24.04 in the Cluster release XX.X.X: **Ansible Core X.XX.X** and **Ansible Collection X.X.X**.
+> **Note:** This module was initially implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 24.04 in the Cluster release XX.X.X: **Ansible Core X.XX.X** and **Ansible Collection X.X.X**.
 >
 > To verify the Ansible version in a specific Cluster release, refer to the
 > **Release artifacts > Management cluster artifacts > System and MCR artifacts**
 > section of the required management Cluster release in
 > [MOSK documentation: Release notes](https://docs.mirantis.com/mosk/latest/release-notes.html).
 
----
-
-# Version 1.0.0 (latest)
+## Configuration parameters
 
 > **WARNING:** Changes made by the module cannot be reverted, except for the external USB storage setting.
 
@@ -28,11 +28,9 @@ The module supports the following input parameters:
   * Set to `true` to comply with the DISA STIG requirement.
   * Set to `false` to revert the settings (for example, if an external USB storage is required for host maintenance).
 
----
+## Configuration examples
 
-# Configuration examples
-
-Example `HostOSConfiguration` with the `disa_stig` module 1.0.0:
+Example `HostOSConfiguration` with the `disa_stig` module:
 
 ```yaml
 apiVersion: kaas.mirantis.com/v1alpha1
