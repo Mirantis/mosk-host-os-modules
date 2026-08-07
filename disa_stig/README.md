@@ -6,7 +6,7 @@ The `disa_stig` module supports configuring the host operating system at runtime
 
 > **Note:** This module supports Ubuntu 24.04 host OS only.
 
-> **Note:** This module was initially implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 24.04 in the Cluster release XX.X.X: **Ansible Core X.XX.X** and **Ansible Collection X.X.X**.
+> **Note:** This module is implemented and validated against the following Ansible versions provided by MOSK for Ubuntu 24.04 in the Cluster release 21.2.0: **Ansible Core 2.16.3** and **Ansible Collection 8.3.0**.
 >
 > To verify the Ansible version in a specific Cluster release, refer to the
 > **Release artifacts > Management cluster artifacts > System and MCR artifacts**
