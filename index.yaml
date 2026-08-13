@@ -37,6 +37,9 @@ spec:
     - name: ntp
       version: 1.0.0
       sha256sum: 873d306aae36e009e468cd955f0a8962bf6140bc9bf1ed667a9eacea3c50e1bc
+    - name: ntp
+      version: 1.1.0
+      sha256sum: a18ce8a0731af8416a0688b233f02a7784e71fb6f13acf54f1a83eca720501c1
     - name: package
       version: 1.0.0
       sha256sum: 2c7c91206ce7a81a90e0068cd4ce7ca05eab36c4da1893555824b5ab82c7cc0e
