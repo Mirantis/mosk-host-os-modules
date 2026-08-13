@@ -1,6 +1,6 @@
 name: disa_stig
 description: 'Module for DISA STIG compliance configuration'
-version: 0.0.51-dev
+version: 1.0.0
 valuesJsonSchema: schema.json
 docURL: https://github.com/Mirantis/host-os-modules/blob/main/disa_stig/README.md
 playbook: main.yaml

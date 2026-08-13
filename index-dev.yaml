@@ -4,24 +4,15 @@ metadata:
   name: dev-mcc-modules
 spec:
   modules:
-    - name: auditd
-      version: 1.0.45-dev
-      sha256sum: c91e072ce9a13a8d4ef75a0bd5c5f14c5064e80e206cab7b592b559677f5454c
     - name: cpushield
       version: 1.1.6-dev
       sha256sum: 9ce183ba906e4eb6552ee3d02f8c4f303068489145ab8815abb0fee291cdb516
-    - name: disa_stig
-      version: 0.0.51-dev
-      sha256sum: f32bc9ddf5ffbeea2e2145f1fd1be65cb572f8374f4f53dcb147c0e5227f758d
     - name: grub_settings
       version: 1.1.2-dev
       sha256sum: 21fec6ccc1aeeb4901e843dc39640e6cf5706a337765bf432dafe3ea91fa2b6b
     - name: irqbalance
       version: 1.1.9-dev
       sha256sum: 348b7f27085300de3920b951023e2ad83871c246ccf5addff2c454ea23322150
-    - name: linux_hard_limits
-      version: 0.0.9-dev
-      sha256sum: 53fe6e3552001f42787764ccd9e3fb29e2d6ec5742452751daa27b2074778112
     - name: ntp
       version: 1.0.11-dev
       sha256sum: e0d4a6963a26392de49d1030ac6d162ccaf98a814be06f3bb0c5c47f85ebf727

@@ -1,6 +1,6 @@
 name: auditd
 description: 'Module for auditd configuration'
-version: 1.0.45-dev
+version: 2.0.0
 valuesJsonSchema: schema.json
 docURL: https://github.com/Mirantis/host-os-modules/blob/main/auditd/README.md
 playbook: main.yaml
