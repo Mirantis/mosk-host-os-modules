@@ -1,0 +1,14 @@
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cpuManagerPolicy: "static"
+cpuManagerPolicyOptions:
+  strict-cpu-reservation: "true"
+
+# The calculated isolated cores (inverted from values.system_cpus)
+reservedSystemCPUs: "{{ isolated_cpus }}"
+
+# Nullify k0s hardcoded cgroup expectations to prevent D-Bus crash loops
+kubeletCgroups: ""
+kubeReservedCgroup: ""
+systemReservedCgroup: ""
+systemCgroups: ""

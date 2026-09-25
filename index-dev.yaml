@@ -5,8 +5,8 @@ metadata:
 spec:
   modules:
     - name: cpushield
-      version: 1.1.6-dev
-      sha256sum: 997795300964d1396bf3b9718632162279ba10e315e0ec30e469a15561acea24
+      version: 1.1.9-dev
+      sha256sum: 5d43d2ab29b724fc8ac6453abe66b3a6fac33d78b9ce6286477230a277a0d7da
     - name: grub_settings
       version: 1.1.2-dev
       sha256sum: 0619199f44c9a7dbdaeec43f8cb319314c93933cc8f02ff35fb5ea251afa5516

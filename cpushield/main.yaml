@@ -1,20 +1,39 @@
 ---
-
 - hosts: all
   become: yes
   gather_facts: true
   vars:
     shield_service_name_v1: "{{ values.old_shield_service_name | default('shield-cpus.service') }}"
   tasks:
-    # For Ubuntu 22.04 with cgroup v2 under systemd management
     - block:
-      # Check if shielding service from older Ubuntu version is present
-      # and disable it (in case of Ubuntu distro upgrade)
+      # 1. Gather Service Facts Early
       - name: Populate service facts
         ansible.builtin.service_facts:
-        when:
-          - (values.disable_old_shield_service | default(False)) | bool
 
+      # 2. Validate system_cpus bounds
+      - name: Validate system_cpus bounds
+        ansible.builtin.script: "validate_cpus.py {{ ansible_processor_vcpus }} '{{ values.system_cpus }}'"
+        args:
+          executable: python3
+        register: cpu_bounds_check
+        ignore_errors: true
+        changed_when: false
+
+      - name: Fail if system_cpus exceeds physical hardware limits
+        ansible.builtin.fail:
+          msg: >-
+            Validation Error: You requested to use CPU core {{ cpu_bounds_check.stdout | trim }},
+            but this node only has {{ ansible_processor_vcpus }} logical vCPUs
+            (valid cores are 0 to {{ ansible_processor_vcpus | int - 1 }}).
+        when: cpu_bounds_check.rc != 0
+
+      # 3. Detect Orchestrator dynamically via systemd units
+      - name: Determine orchestrator (MKE vs k0s)
+        ansible.builtin.set_fact:
+          orchestrator: >-
+            {{ 'k0s' if ('k0sworker.service' in ansible_facts.services or 'k0scontroller.service' in ansible_facts.services) else 'mke' }}
+
+      # 4. Universal OS Shielding Logic
       - name: Disable {{ shield_service_name_v1 }}
         ansible.builtin.command:
           cmd: "systemctl disable --no-reload {{ shield_service_name_v1 }}"
@@ -45,7 +64,7 @@
           unitList: "{{ item | split('.') }}"
           unitType: "{{ unitList | last | capitalize }}"
         notify:
-          - Manage service
+          - Create a reboot request
         loop: "{{ values.systemd_units_to_pin | default([]) }}"
 
       - name: Create shield script
@@ -55,6 +74,7 @@
           mode: "0755"
         notify:
           - Manage service
+          - Create a reboot request
 
       - name: Create systemd service
         ansible.builtin.template:
@@ -63,7 +83,58 @@
           mode: "0644"
         notify:
           - Manage service
+          - Create a reboot request
 
+      # 5. k0s-Specific Iron Cage Logic
+      - name: k0s | Check if Kubelet drop-in directory exists
+        ansible.builtin.stat:
+          path: /etc/kubernetes/kubelet.conf.d
+        register: kubelet_conf_dir
+        when: orchestrator == 'k0s'
+
+      - name: k0s | Fail if legacy Kaas release is detected
+        ansible.builtin.fail:
+          msg: >-
+            The directory /etc/kubernetes/kubelet.conf.d is missing. This indicates
+            you are deploying on an older Kaas release (e.g., 2.32) which lacks lcm-ansible
+            support for Kubelet --config-dir injection. The cpushield day2 module requires
+            a newer Kaas release to safely manage k0s workloads.
+        when:
+          - orchestrator == 'k0s'
+          - not kubelet_conf_dir.stat.exists
+
+      - name: k0s | Calculate isolated CPUs from system CPUs
+        ansible.builtin.script: "calculate_isolated_cpus.py {{ ansible_processor_vcpus }} '{{ values.system_cpus }}'"
+        args:
+          executable: python3
+        register: isolated_cpus_cmd
+        when: orchestrator == 'k0s'
+        changed_when: false
+
+      - name: k0s | Set isolated_cpus fact
+        ansible.builtin.set_fact:
+          isolated_cpus: "{{ isolated_cpus_cmd.stdout | trim }}"
+        when: orchestrator == 'k0s'
+
+      - name: k0s | Template Kubelet configuration drop-in
+        ansible.builtin.template:
+          src: "k0s-kubelet-cpushield.yaml.j2"
+          dest: /etc/kubernetes/kubelet.conf.d/99-cpushield.conf
+          mode: '0644'
+        register: k0s_kubelet_config
+        when: orchestrator == 'k0s'
+        notify:
+          - Create a reboot request
+
+      - name: k0s | Wipe Kubelet CPU Manager state on config change
+        ansible.builtin.file:
+          path: /var/lib/kubelet/cpu_manager_state
+          state: absent
+        when:
+          - orchestrator == 'k0s'
+          - k0s_kubelet_config.changed
+
+      # 6. Final Handlers
       - name: Apply CPU/NUMA pinning settings immediately
         ansible.builtin.command:
           cmd: "systemctl daemon-reload"
