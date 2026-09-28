@@ -33,6 +33,24 @@
           orchestrator: >-
             {{ 'k0s' if ('k0sworker.service' in ansible_facts.services or 'k0scontroller.service' in ansible_facts.services) else 'mke' }}
 
+      # --- Pre-flight Check ---
+      - name: k0s | Check if Kubelet drop-in directory exists
+        ansible.builtin.stat:
+          path: /etc/kubernetes/kubelet.conf.d
+        register: kubelet_conf_dir
+        when: orchestrator == 'k0s'
+
+      - name: k0s | Fail if legacy Kaas release is detected
+        ansible.builtin.fail:
+          msg: >-
+            The directory /etc/kubernetes/kubelet.conf.d is missing. This indicates
+            you are deploying on an older Kaas release (e.g., 2.32) which lacks lcm-ansible
+            support for Kubelet --config-dir injection. The cpushield day2 module requires
+            a newer Kaas release to safely manage k0s workloads.
+        when:
+          - orchestrator == 'k0s'
+          - not kubelet_conf_dir.stat.exists
+
       # 4. Universal OS Shielding Logic
       - name: Disable {{ shield_service_name_v1 }}
         ansible.builtin.command:
@@ -86,23 +104,6 @@
           - Create a reboot request
 
       # 5. k0s-Specific Iron Cage Logic
-      - name: k0s | Check if Kubelet drop-in directory exists
-        ansible.builtin.stat:
-          path: /etc/kubernetes/kubelet.conf.d
-        register: kubelet_conf_dir
-        when: orchestrator == 'k0s'
-
-      - name: k0s | Fail if legacy Kaas release is detected
-        ansible.builtin.fail:
-          msg: >-
-            The directory /etc/kubernetes/kubelet.conf.d is missing. This indicates
-            you are deploying on an older Kaas release (e.g., 2.32) which lacks lcm-ansible
-            support for Kubelet --config-dir injection. The cpushield day2 module requires
-            a newer Kaas release to safely manage k0s workloads.
-        when:
-          - orchestrator == 'k0s'
-          - not kubelet_conf_dir.stat.exists
-
       - name: k0s | Calculate isolated CPUs from system CPUs
         ansible.builtin.script: "calculate_isolated_cpus.py {{ ansible_processor_vcpus }} '{{ values.system_cpus }}'"
         args:

@@ -23,6 +23,21 @@ other cores exclusively, for example, for pinning vCPUs of virtual machines (usi
 > either edit an existing HOC object, or remove the old one and create a new one from scratch
 > to avoid confusion by multiple cpushield-containing objects.
 
+## k0s Orchestrator Support (from module version 1.2.0)
+
+The module now natively supports Mirantis k0s-based clusters starting from 2.33/27.1 release.
+
+> Warning: the module is not supported for a management cluster of MOSK 2.32/26.2 release.
+> Module can be safely used for the MKE-based child cluster ONLY for this release
+
+It dynamically detects the active orchestrator (k0s vs. MKE) by checking for the presence of `k0sworker.service` or `k0scontroller.service` systemd units. When k0s is detected, the module automatically enforces strict Kubernetes CPU isolation by:
+
+* **Calculating Isolated CPUs:** The module inverts the `system_cpus` list against the node's logical CPUs to get the isolated cores. These isolated cores are kept strictly away from Kubernetes workloads.
+* **Kubelet Configuration Drop-in:** The module templates `/etc/kubernetes/kubelet.conf.d/99-cpushield.conf` to set `cpuManagerPolicy: "static"` with the `strict-cpu-reservation` option. It sets `reservedSystemCPUs` to the calculated isolated cores so that the Kubelet never schedules pods on them.
+* **Conflict Resolution:** To prevent Kubelet validation failures, the module explicitly nullifies legacy k0s defaults by clearing conflicting `kubeletCgroups`, `kubeReservedCgroup`, `systemReservedCgroup`, and `systemCgroups` strings.
+* **State Management:** On configuration changes, the module safely wipes `/var/lib/kubelet/cpu_manager_state` to ensure the static CPU policy initializes cleanly upon reboot.
+* **Compatibility Guardrail:** The module performs a pre-flight check prior to modifying any system files, safely aborting on legacy KaaS 2.32 deployments that lack `--config-dir` injection support for the Kubelet.
+
 ## Supported parameters
 
 > Note: The cpushield module creates a special file for LCM agent to request a subsequent reboot.

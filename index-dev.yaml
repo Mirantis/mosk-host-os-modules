@@ -6,7 +6,7 @@ spec:
   modules:
     - name: cpushield
       version: 1.1.9-dev
-      sha256sum: 97e10c7a442c6ed3ddb5a9707cd643d7884fc2148dba43d61f136225cfac6a23
+      sha256sum: 079248fd25ff2a3f5618c3aece3f83c392e731b9db8463543db62e64f2aaffaa
     - name: grub_settings
       version: 1.1.2-dev
       sha256sum: 21fec6ccc1aeeb4901e843dc39640e6cf5706a337765bf432dafe3ea91fa2b6b
