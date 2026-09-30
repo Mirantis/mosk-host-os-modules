@@ -23,20 +23,20 @@ other cores exclusively, for example, for pinning vCPUs of virtual machines (usi
 > either edit an existing HOC object, or remove the old one and create a new one from scratch
 > to avoid confusion by multiple cpushield-containing objects.
 
-## k0s Orchestrator Support (from module version 1.2.0)
+## k0s orchestrator support
 
-The module now natively supports Mirantis k0s-based clusters starting from 2.33/27.1 release.
+The module natively supports Mirantis k0s-based clusters.
 
-> Warning: the module is not supported for a management cluster of MOSK 2.32/26.2 release.
-> Module can be safely used for the MKE-based child cluster ONLY for this release
+> Warning: The module is not supported on MOSK management clusters running the 2.32.0 (MOSK 26.2) release.
+> On this release, use the module only with MKE-based MOSK clusters.
 
-It dynamically detects the active orchestrator (k0s vs. MKE) by checking for the presence of `k0sworker.service` or `k0scontroller.service` systemd units. When k0s is detected, the module automatically enforces strict Kubernetes CPU isolation by:
+The module dynamically detects the active orchestrator (k0s or MKE) by checking for the presence of the `k0sworker.service` or `k0scontroller.service` systemd units. When k0s is detected, the module automatically enforces strict Kubernetes CPU isolation using the following mechanisms:
 
-* **Calculating Isolated CPUs:** The module inverts the `system_cpus` list against the node's logical CPUs to get the isolated cores. These isolated cores are kept strictly away from Kubernetes workloads.
-* **Kubelet Configuration Drop-in:** The module templates `/etc/kubernetes/kubelet.conf.d/99-cpushield.conf` to set `cpuManagerPolicy: "static"` with the `strict-cpu-reservation` option. It sets `reservedSystemCPUs` to the calculated isolated cores so that the Kubelet never schedules pods on them.
-* **Conflict Resolution:** To prevent Kubelet validation failures, the module explicitly nullifies legacy k0s defaults by clearing conflicting `kubeletCgroups`, `kubeReservedCgroup`, `systemReservedCgroup`, and `systemCgroups` strings.
-* **State Management:** On configuration changes, the module safely wipes `/var/lib/kubelet/cpu_manager_state` to ensure the static CPU policy initializes cleanly upon reboot.
-* **Compatibility Guardrail:** The module performs a pre-flight check prior to modifying any system files, safely aborting on legacy KaaS 2.32 deployments that lack `--config-dir` injection support for the Kubelet.
+* **Calculating isolated CPUs:** The module inverts the `system_cpus` list against the logical CPUs of the node to obtain the isolated cores. These isolated cores are kept strictly away from Kubernetes workloads.
+* **Drop-in kubelet configuration:** The module templates `/etc/kubernetes/kubelet.conf.d/99-cpushield.conf` to set `cpuManagerPolicy: "static"` with the `strict-cpu-reservation` option. It sets `reservedSystemCPUs` to the calculated isolated cores so that kubelet never schedules pods on them.
+* **Conflict resolution:** To prevent kubelet validation failures, the module overrides the legacy k0s defaults by clearing the conflicting `kubeletCgroups`, `kubeReservedCgroup`, `systemReservedCgroup`, and `systemCgroups` strings.
+* **State management:** On configuration changes, the module safely deletes `/var/lib/kubelet/cpu_manager_state` to ensure that the static CPU policy initializes cleanly upon reboot.
+* **Compatibility guardrail:** The module performs a pre-flight check before modifying any system files and aborts on legacy MOSK management clusters of the 2.32.0 release, whose kubelet does not support the `--config-dir` option.
 
 ## Supported parameters
 

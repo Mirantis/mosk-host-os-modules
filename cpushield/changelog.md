@@ -1,10 +1,10 @@
 # 1.2.0
 
-- Added native k0s orchestrator support with dynamic detection (starting from MOSK 2.33/27.1 release).
-- Automated mapping of `system_cpus` to Kubelet `reservedSystemCPUs` and `cpuManagerPolicy: static`.
-- Fixed Kubelet crash loops by forcefully clearing conflicting k0s hardcoded cgroups (`kubeletCgroups`, `kubeReservedCgroup`, `systemReservedCgroup`, `systemCgroups`).
+- Added native k0s orchestrator support with dynamic detection. In MOSK, this feature applies starting with MOSK management 2.33.0 (MOSK 27.1).
+- Automated the mapping of `system_cpus` to kubelet `reservedSystemCPUs` and `cpuManagerPolicy: static`.
+- Fixed kubelet crash loops by forcefully clearing conflicting k0s hardcoded cgroups (`kubeletCgroups`, `kubeReservedCgroup`, `systemReservedCgroup`, `systemCgroups`).
 - Added automatic deletion of `/var/lib/kubelet/cpu_manager_state` on CPU boundary changes.
-- Added pre-flight check to safely block legacy KaaS deployments with k0s (MOSK 2.32/26.2 release, mgmt cluster only) as they do not support /etc/kubernetes/kubelet.conf.d directory passing to Kubelet.
+- Added a pre-flight check that blocks deployment on k0s-based MOSK management clusters of the 2.32.0 (MOSK 26.2) release, because they do not support passing the `/etc/kubernetes/kubelet.conf.d` directory to kubelet.
 
 # 1.1.0
 
