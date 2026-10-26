@@ -16,6 +16,9 @@ spec:
     - name: cpushield
       version: 1.1.0
       sha256sum: 38ccb1c74ccbe4f47dc3dbfbf620a40902620a53c9792a8c7d1742844f311708
+    - name: cpushield
+      version: 1.2.0
+      sha256sum: d2f4be59b5dbd979214e40763b3cae05ade55d0cf2870757eddccc6be1fdb87b
     - name: disa_stig
       version: 1.0.0
       sha256sum: 0347e5b8ec89d38a3aa21dea1d0bc96d32678a7b0bdfcc71269a98fcd74b4ef4
